@@ -23,6 +23,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.messages.TwoDeadWheelInputsMessage;
 
+/**
+ *
+ * This code defines a class called TwoDeadWheelLocalizer that implements the Localizer interface.
+ * This class is used to estimate the robot's position and orientation on the field using
+ * two dead wheels (encoders) and an Inertial Measurement Unit (IMU).
+ */
 @Config
 public final class TwoDeadWheelLocalizer implements Localizer {
     public static class Params {
@@ -43,6 +49,14 @@ public final class TwoDeadWheelLocalizer implements Localizer {
     private double lastRawHeadingVel, headingVelOffset;
     private boolean initialized;
 
+    /**
+     * The constructor initializes the encoders (par, perp), the IMU (imu), and sets the distance per encoder tick (inPerTick).
+     * It reads configuration parameters from PARAMS and logs them using FlightRecorder.
+     * It also initializes variables to store the previous encoder positions, heading, and raw heading velocity.
+     * @param hardwareMap
+     * @param imu
+     * @param inPerTick
+     */
     public TwoDeadWheelLocalizer(HardwareMap hardwareMap, IMU imu, double inPerTick) {
         // TODO: make sure your config has **motors** with these names (or change them)
         //   the encoders should be plugged into the slot matching the named motor
@@ -51,7 +65,7 @@ public final class TwoDeadWheelLocalizer implements Localizer {
         perp = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "perp")));
 
         // TODO: reverse encoder directions if needed
-           par.setDirection(DcMotorSimple.Direction.REVERSE);
+        par.setDirection(DcMotorSimple.Direction.REVERSE);
 
         this.imu = imu;
 
@@ -60,6 +74,14 @@ public final class TwoDeadWheelLocalizer implements Localizer {
         FlightRecorder.write("TWO_DEAD_WHEEL_PARAMS", PARAMS);
     }
 
+    /**
+     * The update() method is called repeatedly to get the latest robot pose estimate.
+     * It reads encoder positions and velocities using getPositionAndVelocity().
+     * It reads the robot's heading and angular velocity from the IMU.
+     * It performs calculations to estimate the robot's movement based on encoder and IMU data.
+     * It returns a Twist2dDual object representing the robot's linear and angular velocities.
+     * @return
+     */
     public Twist2dDual<Time> update() {
         PositionVelocityPair parPosVel = par.getPositionAndVelocity();
         PositionVelocityPair perpPosVel = perp.getPositionAndVelocity();
@@ -100,10 +122,17 @@ public final class TwoDeadWheelLocalizer implements Localizer {
             );
         }
 
+        // Dead Wheel Odometer:
+        // The code calculates the change in the robot's position based on the encoder readings.
+        // It accounts for the robot's rotation using the heading information from the IMU.
         double parPosDelta = parPosVel.position - lastParPos;
         double perpPosDelta = perpPosVel.position - lastPerpPos;
         double headingDelta = heading.minus(lastHeading);
 
+        /**
+         * Twist2dDual: The Twist2dDual object represents the robot's velocity in both linear (x, y)
+         * and angular (heading) directions. It also includes the rate of change of these velocities.
+         */
         Twist2dDual<Time> twist = new Twist2dDual<>(
                 new Vector2dDual<>(
                         new DualNum<Time>(new double[] {

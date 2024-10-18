@@ -44,10 +44,7 @@ public final class PinPointLocalizer implements Localizer {
 // Declare OpMode member for the Odometer Computer
     GoBildaPinpointDriverRR odo;
     private double lastParPos, lastPerpPos;
-    private Rotation2d lastHeading;
-
-    private final double inPerTick;
-
+    private double lastHeading;
     private double lastRawHeadingVel, headingVelOffset;
     private boolean initialized;
 
@@ -56,12 +53,9 @@ public final class PinPointLocalizer implements Localizer {
      * It reads configuration parameters from PARAMS and logs them using FlightRecorder.
      * It also initializes variables to store the previous encoder positions, heading, and raw heading velocity.
      * @param hardwareMap
-     * @param imu
-     * @param inPerTick
      */
-    public PinPointLocalizer(HardwareMap hardwareMap, IMU imu, double inPerTick) {
+    public PinPointLocalizer(HardwareMap hardwareMap) {
         odo = hardwareMap.get(GoBildaPinpointDriverRR.class,"pinpoint");
-
         /*
         Set the odometry pod positions relative to the point that the odometry computer tracks around.
         The X pod offset refers to how far sideways from the tracking point the
@@ -114,37 +108,20 @@ public final class PinPointLocalizer implements Localizer {
      * @return
      */
     public Twist2dDual<Time> update() {
-        PositionVelocityPair parPosVel = par.getPositionAndVelocity();
-        PositionVelocityPair perpPosVel = perp.getPositionAndVelocity();
+        double parPos = odo.getPosX();
+        double parVel = odo.getVelX();
+        double perpPos = odo.getPosY();
+        double perpVel = odo.getVelY();
 
-        YawPitchRollAngles angles = imu.getRobotYawPitchRollAngles();
-        // Use degrees here to work around https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/1070
-        AngularVelocity angularVelocityDegrees = imu.getRobotAngularVelocity(AngleUnit.DEGREES);
-        AngularVelocity angularVelocity = new AngularVelocity(
-                UnnormalizedAngleUnit.RADIANS,
-                (float) Math.toRadians(angularVelocityDegrees.xRotationRate),
-                (float) Math.toRadians(angularVelocityDegrees.yRotationRate),
-                (float) Math.toRadians(angularVelocityDegrees.zRotationRate),
-                angularVelocityDegrees.acquisitionTime
-        );
+        double heading = odo.getHeading();
 
-        FlightRecorder.write("TWO_DEAD_WHEEL_INPUTS", new TwoDeadWheelInputsMessage(parPosVel, perpPosVel, angles, angularVelocity));
-
-        Rotation2d heading = Rotation2d.exp(angles.getYaw(AngleUnit.RADIANS));
-
-        // see https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/617
-        double rawHeadingVel = angularVelocity.zRotationRate;
-        if (Math.abs(rawHeadingVel - lastRawHeadingVel) > Math.PI) {
-            headingVelOffset -= Math.signum(rawHeadingVel) * 2 * Math.PI;
-        }
-        lastRawHeadingVel = rawHeadingVel;
-        double headingVel = headingVelOffset + rawHeadingVel;
+        double headingVel = odo.getHeadingVelocity();
 
         if (!initialized) {
             initialized = true;
 
-            lastParPos = parPosVel.position;
-            lastPerpPos = perpPosVel.position;
+            lastParPos = parPos;
+            lastPerpPos = perpPos;
             lastHeading = heading;
 
             return new Twist2dDual<>(
@@ -156,9 +133,9 @@ public final class PinPointLocalizer implements Localizer {
         // Dead Wheel Odometer:
         // The code calculates the change in the robot's position based on the encoder readings.
         // It accounts for the robot's rotation using the heading information from the IMU.
-        double parPosDelta = parPosVel.position - lastParPos;
-        double perpPosDelta = perpPosVel.position - lastPerpPos;
-        double headingDelta = heading.minus(lastHeading);
+        double parPosDelta = parPos - lastParPos;
+        double perpPosDelta = perpPos - lastPerpPos;
+        double headingDelta = heading - lastHeading;
 
         /**
          * Twist2dDual: The Twist2dDual object represents the robot's velocity in both linear (x, y)
@@ -168,12 +145,12 @@ public final class PinPointLocalizer implements Localizer {
                 new Vector2dDual<>(
                         new DualNum<Time>(new double[] {
                                 parPosDelta - PARAMS.parYTicks * headingDelta,
-                                parPosVel.velocity - PARAMS.parYTicks * headingVel,
-                        }).times(inPerTick),
+                                parVel - PARAMS.parYTicks * headingVel,
+                        }).times(1),
                         new DualNum<Time>(new double[] {
                                 perpPosDelta - PARAMS.perpXTicks * headingDelta,
-                                perpPosVel.velocity - PARAMS.perpXTicks * headingVel,
-                        }).times(inPerTick)
+                                perpVel - PARAMS.perpXTicks * headingVel,
+                        }).times(1)
                 ),
                 new DualNum<>(new double[] {
                         headingDelta,
@@ -181,8 +158,8 @@ public final class PinPointLocalizer implements Localizer {
                 })
         );
 
-        lastParPos = parPosVel.position;
-        lastPerpPos = perpPosVel.position;
+        lastParPos = parPos;
+        lastPerpPos = perpPos;
         lastHeading = heading;
 
         return twist;
