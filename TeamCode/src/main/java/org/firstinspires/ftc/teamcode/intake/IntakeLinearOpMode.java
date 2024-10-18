@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.outtake.OuttakeCommand;
+import org.firstinspires.ftc.teamcode.subsystem.IntakeSubsystem;
 
 @TeleOp(name = "Intake Control LinearOpMode", group = "LinearOpMode")
 public class IntakeLinearOpMode extends LinearOpMode {

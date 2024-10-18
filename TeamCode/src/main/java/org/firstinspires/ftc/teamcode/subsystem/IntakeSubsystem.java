@@ -1,13 +1,12 @@
-package org.firstinspires.ftc.teamcode.intake;
+package org.firstinspires.ftc.teamcode.subsystem;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.outtake.OuttakeSubsystem;
 
-public class IntakeSubsystem extends OuttakeSubsystem {
+public class IntakeSubsystem implements Subsystem {
     private DcMotor intakeMotor;
     private final double INTAKE_POWER = 1.0; // Power level for the intake
     private final double OUTTAKE_POWER = -1.0; // Power level for the outtake
@@ -18,7 +17,12 @@ public class IntakeSubsystem extends OuttakeSubsystem {
         intakeMotor.setPower(STOP_POWER); // Ensure motor is stopped initially
     }
 
-    public void update(Gamepad gamepad) {
+    @Override
+    public void update() {
+
+    }
+
+    public void runIntake(Gamepad gamepad) {
         // Check if the intake button is pressed
         if (gamepad.left_trigger > 0.5) {
             intakeMotor.setPower(INTAKE_POWER); // Run intake

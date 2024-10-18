@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.intake;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.subsystem.IntakeSubsystem;
 
 public class IntakeCommand {
 

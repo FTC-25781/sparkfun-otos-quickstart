@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.outtake;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.subsystem.OuttakeSubsystem;
+
 @TeleOp(name = "Outtake OpMode")
 class OuttakeOpMode extends OpMode {
     private OuttakeSubsystem outtakeSubsystem;
