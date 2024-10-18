@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class OuttakeSubsystem {
+public class OuttakeSubsystem implements Subsystem {
     private DcMotor outtakeMotor;
 
     // Constants
@@ -37,5 +37,10 @@ public class OuttakeSubsystem {
         } else {
             stopOuttake();
         }
+    }
+
+    @Override
+    public void update() {
+
     }
 }
