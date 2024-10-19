@@ -42,5 +42,14 @@ public class OuttakeSubsystem implements Subsystem {
     @Override
     public void update() {
 
+
+    }
+
+    public void stop() {
+        return (p) -> {
+            outtakeMotor.setPower(OUTTAKE_POWER);
+            return true;
+        };
+
     }
 }

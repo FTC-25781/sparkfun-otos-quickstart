@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class IntakeSubsystem implements Subsystem {
+public class IntakeSubsystem extends OuttakeSubsystem implements Subsystem {
     private DcMotor intakeMotor;
     private final double INTAKE_POWER = 1.0; // Power level for the intake
     private final double OUTTAKE_POWER = -1.0; // Power level for the outtake
