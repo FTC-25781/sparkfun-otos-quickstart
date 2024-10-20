@@ -7,7 +7,7 @@ buildscript {
 
 plugins {
     id "com.github.node-gradle.node" version "2.2.4"
-    id 'org.jetbrains.kotlin.android' version '1.9.0'
+    id "org.jetbrains.kotlin.android" version "1.9.0" apply false
 }
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
