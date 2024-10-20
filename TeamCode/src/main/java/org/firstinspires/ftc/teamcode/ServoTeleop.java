@@ -20,7 +20,7 @@ public class ServoTeleop extends LinearOpMode {
 
         while (opModeIsActive()) {
             // Get the Y-axis value of the left stick
-            double forwardValue = gamepad1.left_stick_y;
+            double forwardValue = gamepad1.left_stick_y * 0.25;
 
             // Control the servos based on the joystick input
             if (forwardValue > 0) {
