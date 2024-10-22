@@ -17,17 +17,14 @@ public class IntakeSubsystem {
     VisionAngleSub servoOrientation;
 
     // Constraints
-    private final double slide_out_motor = 1.0;
     private final double wrist_start_both = 0.5;
     private final double servo1_pick = 0.0;
     private final double servo2_pick = 1.0;
     private final double claw_open = 1.0;
     private final double servo1_up = 1.0;
     private final double servo2_up = 0.0;
-    private final double slide_in_motor = 0.0;
-
-    // Variables
-    double final_pos_motor = 800;
+    int final_pos_motor = 800;
+    int final_in_pos_motor = 0;
     double motor_extend_speed = 0.5;
 
     // Constructor for initializing the subsystem
@@ -41,8 +38,9 @@ public class IntakeSubsystem {
 
         slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        // Initialize VisionAngleSub (make sure the VisionAngleSub pipeline is working)
-        servoOrientation = new VisionAngleSub(); // Assuming this is correct initialization
+        servoOrientation = new VisionAngleSub();
+        clawServo.setPosition(0.0);
+        orientationServo.setPosition(0.0);
     }
 
     // Method to start the intake
@@ -58,16 +56,39 @@ public class IntakeSubsystem {
             slideMotor.setPower(0);
 
             // 2. Wrist set position 0.5
-            wristServo1.setPosition(wrist_start_both); // Neutral position
+            wristServo1.setPosition(wrist_start_both);
             wristServo2.setPosition(wrist_start_both);
 
             // 3. Get and use the orientation value
-            double orientation = servoOrientation.getOrientation(); // Fetch the orientation from VisionAngleSub
+            double orientation = servoOrientation.getOrientation();
+            orientationServo.setPosition(orientation);
             telemetry.addData("Claw Orientation", orientation);
             telemetry.update();
 
-            // Use the orientation value for whatever action you want (like setting servo positions)
-            orientationServo.setPosition(orientation); // Adjust servo based on orientation
+            // 4. Open Claw
+            clawServo.setPosition(1.0);
+
+            // 5. Wrist set down
+            wristServo1.setPosition(servo1_pick);
+            wristServo2.setPosition(servo2_pick);
+
+            // 6. Close Claw
+            clawServo.setPosition(0.0);
+
+            // 7. Wrist up (Going to drop position)
+            wristServo1.setPosition(servo1_up);
+            wristServo2.setPosition(servo2_up);
+
+            // 8. Open Claw
+            clawServo.setPosition(1.0);
+
+            // 9. Reset the wrist
+            wristServo1.setPosition(wrist_start_both);
+            wristServo2.setPosition(wrist_start_both);
+
+            // 10. Bring in slides
+            slideMotor.setTargetPosition((int) final_in_pos_motor);
+            slideMotor.setPower(-motor_extend_speed);
         }
     }
 
