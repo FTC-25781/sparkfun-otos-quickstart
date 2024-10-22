@@ -16,13 +16,6 @@ public class IntakeSubsystem {
 
     VisionAngleSub servoOrientation;
 
-    // Constraints
-    private final double wrist_start_both = 0.5;
-    private final double servo1_pick = 0.0;
-    private final double servo2_pick = 1.0;
-    private final double claw_open = 1.0;
-    private final double servo1_up = 1.0;
-    private final double servo2_up = 0.0;
     int final_pos_motor = 800;
     int final_in_pos_motor = 0;
     double motor_extend_speed = 0.5;
@@ -56,6 +49,7 @@ public class IntakeSubsystem {
             slideMotor.setPower(0);
 
             // 2. Wrist set position 0.5
+            double wrist_start_both = 0.5;
             wristServo1.setPosition(wrist_start_both);
             wristServo2.setPosition(wrist_start_both);
 
@@ -66,21 +60,26 @@ public class IntakeSubsystem {
             telemetry.update();
 
             // 4. Open Claw
-            clawServo.setPosition(1.0);
+            double claw_open = 1.0;
+            clawServo.setPosition(claw_open);
 
             // 5. Wrist set down
+            double servo1_pick = 0.0;
             wristServo1.setPosition(servo1_pick);
+            double servo2_pick = 1.0;
             wristServo2.setPosition(servo2_pick);
 
             // 6. Close Claw
             clawServo.setPosition(0.0);
 
             // 7. Wrist up (Going to drop position)
+            double servo1_up = 1.0;
             wristServo1.setPosition(servo1_up);
+            double servo2_up = 0.0;
             wristServo2.setPosition(servo2_up);
 
             // 8. Open Claw
-            clawServo.setPosition(1.0);
+            clawServo.setPosition(claw_open);
 
             // 9. Reset the wrist
             wristServo1.setPosition(wrist_start_both);
