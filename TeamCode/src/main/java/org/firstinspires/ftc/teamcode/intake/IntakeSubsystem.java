@@ -31,68 +31,81 @@ public class IntakeSubsystem {
 
         slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        // Set Zero Power Behavior to BRAKE
+        slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         servoOrientation = new VisionAngleSub();
         clawServo.setPosition(0.0);
         orientationServo.setPosition(0.0);
     }
 
-    // Method to start the intake
+    // Main method to start the intake, calling subfunctions
     public void startIntake(Gamepad gamepad) {
         if (gamepad.a) {
-            // 1. Slide extending outward
-            slideMotor.setTargetPosition((int) final_pos_motor);
-            slideMotor.setPower(motor_extend_speed);
-            while (slideMotor.isBusy()) {
-                telemetry.addData("Current Position", slideMotor.getCurrentPosition());
-                telemetry.update();
-            }
-            slideMotor.setPower(0);
-
-            // 2. Wrist set position 0.5
-            double wrist_start_both = 0.5;
-            wristServo1.setPosition(wrist_start_both);
-            wristServo2.setPosition(wrist_start_both);
-
-            // 3. Get and use the orientation value
-            double orientation = servoOrientation.getOrientation();
-            orientationServo.setPosition(orientation);
-            telemetry.addData("Claw Orientation", orientation);
-            telemetry.update();
-
-            // 4. Open Claw
-            double claw_open = 1.0;
-            clawServo.setPosition(claw_open);
-
-            // 5. Wrist set down
-            double servo1_pick = 0.0;
-            wristServo1.setPosition(servo1_pick);
-            double servo2_pick = 1.0;
-            wristServo2.setPosition(servo2_pick);
-
-            // 6. Close Claw
-            clawServo.setPosition(0.0);
-
-            // 7. Wrist up (Going to drop position)
-            double servo1_up = 1.0;
-            wristServo1.setPosition(servo1_up);
-            double servo2_up = 0.0;
-            wristServo2.setPosition(servo2_up);
-
-            // 8. Open Claw
-            clawServo.setPosition(claw_open);
-
-            // 9. Reset the wrist
-            wristServo1.setPosition(wrist_start_both);
-            wristServo2.setPosition(wrist_start_both);
-
-            // 10. Bring in slides
-            slideMotor.setTargetPosition((int) final_in_pos_motor);
-            slideMotor.setPower(-motor_extend_speed);
+            extendSlide();
+            setWristPosition(0.5, 0.5); // Initial wrist position
+            setOrientation();
+            openClaw();
+            setWristPosition(0.0, 1.0); // Pick position
+            closeClaw();
+            setWristPosition(1.0, 0.0); // Lift wrist for drop
+            openClaw();
+            resetWrist();
+            retractSlide();
         }
+    }
+
+    // 1. Slide extending outward
+    private void extendSlide() {
+        slideMotor.setTargetPosition(final_pos_motor);
+        slideMotor.setPower(motor_extend_speed);
+        while (slideMotor.isBusy()) {
+            telemetry.addData("Current Position", slideMotor.getCurrentPosition());
+            telemetry.update();
+        }
+        slideMotor.setPower(0);
+    }
+
+    // 2. Set wrist position
+    private void setWristPosition(double wrist1, double wrist2) {
+        wristServo1.setPosition(wrist1);
+        wristServo2.setPosition(wrist2);
+    }
+
+    // 3. Get and set the orientation value
+    private void setOrientation() {
+        double orientation = servoOrientation.getOrientation();
+        orientationServo.setPosition(orientation);
+        telemetry.addData("Claw Orientation", orientation);
+        telemetry.update();
+    }
+
+    // 4. Open claw
+    private void openClaw() {
+        clawServo.setPosition(1.0);
+    }
+
+    // 6. Close claw
+    private void closeClaw() {
+        clawServo.setPosition(0.0);
+    }
+
+    // 9. Reset wrist to neutral position
+    private void resetWrist() {
+        setWristPosition(0.5, 0.5);
+    }
+
+    // 10. Slide retracting inward
+    private void retractSlide() {
+        slideMotor.setTargetPosition(final_in_pos_motor);
+        slideMotor.setPower(-motor_extend_speed);
     }
 
     // Method to stop the intake
     public void stopIntake() {
-        // Add stop logic here
+        slideMotor.setPower(0);
+        clawServo.setPosition(0.0);
+        telemetry.addData("Intake", "Stopped");
+        telemetry.update();
     }
 }
