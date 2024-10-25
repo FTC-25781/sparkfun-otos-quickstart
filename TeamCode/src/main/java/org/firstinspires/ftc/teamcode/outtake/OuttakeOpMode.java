@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.subsystem.OuttakeSubsystem;
 
 @TeleOp(name = "Outtake OpMode")
-class OuttakeOpMode extends OpMode {
-    private OuttakeSubsystem outtakeSubsystem;
+public class OuttakeOpMode extends OpMode {
+    public OuttakeSubsystem outtakeSubsystem;
 
     @Override
     public void init() {

@@ -23,10 +23,10 @@ public class IntakeCommand {
     }
 
     // Execute the command based on the state
-    public void execute() {
+    public void execute() throws InterruptedException {
         switch (intakeState) {
             case START:
-                intakeSubsystem.startIntake();
+                intakeSubsystem.wait();
                 telemetry.addData("Command", "Intake Started");
                 break;
 

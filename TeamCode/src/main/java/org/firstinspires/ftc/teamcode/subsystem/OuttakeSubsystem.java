@@ -45,11 +45,7 @@ public class OuttakeSubsystem implements Subsystem {
 
     }
 
-    public void stop() {
-        return (p) -> {
-            outtakeMotor.setPower(OUTTAKE_POWER);
-            return true;
-        };
+    };
 
-    }
-}
+
+

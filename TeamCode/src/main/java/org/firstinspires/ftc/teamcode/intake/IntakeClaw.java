@@ -10,7 +10,7 @@ public class IntakeClaw {
 
     // Define positions for open and closed states
     private static final double CLAW_OPEN_POSITION = 1.0;  // FULLY OPENED CLAW
-    private static final double CLAW_CLOSED_POSITION = 0.0; // FULLY CLOSED CLAS
+    private static final double CLAW_CLOSED_POSITION = 0.0; // FULLY CLOSED CLAW
 
     // Constructor
     public IntakeClaw(HardwareMap hardwareMap) {
