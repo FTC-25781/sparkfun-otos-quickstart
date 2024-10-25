@@ -20,7 +20,7 @@
  *   SOFTWARE.
  */
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.roadrunner;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
@@ -40,7 +40,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
         description = "goBILDA® Pinpoint Odometry Computer (IMU Sensor Fusion for 2 Wheel Odometry)"
 )
 
-public class GoBildaPinpointDriverRR extends com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriver {
+public class GoBildaPinpointDriverRR extends GoBildaPinpointDriver {
 
 
     public float currentTicksPerMM = 0f;

@@ -1,45 +1,117 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-
+import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class IntakeSubsystem implements Subsystem {
-    private DcMotor intakeMotor;
-    private final double INTAKE_POWER = 1.0; // Power level for the intake
-    private final double OUTTAKE_POWER = -1.0; // Power level for the outtake
-    private final double STOP_POWER = 0.0; // Stop power
+import com.qualcomm.robotcore.hardware.Gamepad;
 
+public class IntakeSubsystem implements Subsystem {
+    private final DcMotor slideMotor;
+    private final Servo wristServo1;
+    private final Servo wristServo2;
+    private final Servo orientationServo;
+    private final Servo clawServo;
+    private final Telemetry telemetry;
+
+    VisionAngleSub servoOrientation;
+
+    int final_pos_motor = 800;
+    int final_in_pos_motor = 0;
+    double motor_extend_speed = 0.5;
+    boolean intake_started = false;
+
+    // Constructor for initializing the subsystem
     public IntakeSubsystem(HardwareMap hardwareMap, Telemetry telemetry) {
-        intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor"); // Change "intakeMotor" to your motor's name
-        intakeMotor.setPower(STOP_POWER); // Ensure motor is stopped initially
+        this.telemetry = telemetry;
+        slideMotor = hardwareMap.get(DcMotor.class, "slideMotor");
+        wristServo1 = hardwareMap.get(Servo.class, "wristServo1");
+        wristServo2 = hardwareMap.get(Servo.class, "wristServo2");
+        orientationServo = hardwareMap.get(Servo.class, "orientationServo");
+        clawServo = hardwareMap.get(Servo.class, "clawServo");
+
+        slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        // Set Zero Power Behavior to BRAKE
+        slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        servoOrientation = new VisionAngleSub();
+        clawServo.setPosition(0.0);
+        orientationServo.setPosition(0.0);
+    }
+
+    // Main method to start the intake, calling subfunctions
+    public void startIntake(Gamepad gamepad) {
+        if (gamepad.a && !intake_started) {
+            intake_started = true;
+            extendSlide();
+            setWristPosition(0.5, 0.5); // Initial wrist position
+            setOrientation();
+            openClaw();
+            setWristPosition(0.0, 1.0); // Pick position
+            closeClaw();
+            setWristPosition(1.0, 0.0); // Lift wrist for drop
+            openClaw();
+            resetWrist();
+            retractSlide();
+            stopIntake();
+        }
+    }
+
+    // 1. Slide extending outward
+    private void extendSlide() {
+        slideMotor.setTargetPosition(final_in_pos_motor);
+        slideMotor.setPower(motor_extend_speed);
+        slideMotor.setPower(0);
+    }
+
+    // 2. Set wrist position
+    private void setWristPosition(double wrist1, double wrist2) {
+        wristServo1.setPosition(wrist1);
+        wristServo2.setPosition(wrist2);
+    }
+
+    // 3. Get and set the orientation value
+    private void setOrientation() {
+        double orientation = servoOrientation.getOrientation();
+        orientationServo.setPosition(orientation);
+        telemetry.addData("Claw Orientation", orientation);
+        telemetry.update();
+    }
+
+    // 4. Open claw
+    private void openClaw() {
+        clawServo.setPosition(1.0);
+    }
+
+    // 6. Close claw
+    private void closeClaw() {
+        clawServo.setPosition(0.0);
+    }
+
+    // 9. Reset wrist to neutral position
+    private void resetWrist() {
+        setWristPosition(0.5, 0.5);
+    }
+
+    // 10. Slide retracting inward
+    private void retractSlide() {
+        slideMotor.setTargetPosition(final_in_pos_motor);
+        slideMotor.setPower(-motor_extend_speed);
+    }
+
+    // Method to stop the intake
+    public void stopIntake() {
+        slideMotor.setPower(0);
+        clawServo.setPosition(0.0);
+        telemetry.addData("Intake", "Stopped");
+        telemetry.update();
+        intake_started = false;
     }
 
     @Override
     public void update() {
 
-    }
-
-    public void runIntake(Gamepad gamepad) {
-        // Check if the intake button is pressed
-        if (gamepad.left_trigger > 0.5) {
-            intakeMotor.setPower(INTAKE_POWER); // Run intake
-        } else if (gamepad.right_trigger > 0.5) {
-            intakeMotor.setPower(OUTTAKE_POWER); // Run outtake
-        } else {
-            intakeMotor.setPower(STOP_POWER); // Stop motor
-        }
-    }
-
-    public void stop() {
-        intakeMotor.setPower(STOP_POWER); // Stop the intake when done
-    }
-
-    public void startIntake() {
-    }
-
-    public void reverseIntake() {
     }
 }

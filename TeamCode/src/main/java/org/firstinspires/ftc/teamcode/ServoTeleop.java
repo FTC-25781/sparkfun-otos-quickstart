@@ -11,6 +11,8 @@ public class ServoTeleop extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+
+        Robot myBot = new Robot(hardwareMap, telemetry);
         // Initialize the servos
         servo1 = hardwareMap.get(Servo.class, "servo1");
         servo2 = hardwareMap.get(Servo.class, "servo2");

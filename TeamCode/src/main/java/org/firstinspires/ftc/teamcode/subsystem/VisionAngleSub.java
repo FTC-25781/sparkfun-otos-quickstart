@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.intake;
+package org.firstinspires.ftc.teamcode.subsystem;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;

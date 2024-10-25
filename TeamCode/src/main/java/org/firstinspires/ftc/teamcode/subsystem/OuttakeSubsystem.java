@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.Robot;
+
 public class OuttakeSubsystem implements Subsystem {
     private DcMotor outtakeMotor;
 
@@ -14,7 +16,7 @@ public class OuttakeSubsystem implements Subsystem {
         // Initialize the outtake motor
         outtakeMotor = hardwareMap.get(DcMotor.class, "outtake_motor"); // Replace with your motor's name
         outtakeMotor.setDirection(DcMotor.Direction.REVERSE); // Adjust if needed
-        outtakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); // Optional: Set behavior when power is 0
+        outtakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); // Optional: Set behavior when power is 0;
     }
 
     public OuttakeSubsystem() {

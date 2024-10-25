@@ -1,4 +1,4 @@
- package org.firstinspires.ftc.teamcode.vision;
+ package org.firstinspires.ftc.teamcode.subsystem.vision;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
