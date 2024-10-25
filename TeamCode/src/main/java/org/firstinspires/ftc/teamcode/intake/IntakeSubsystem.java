@@ -19,6 +19,7 @@ public class IntakeSubsystem {
     int final_pos_motor = 800;
     int final_in_pos_motor = 0;
     double motor_extend_speed = 0.5;
+    boolean intake_started = false;
 
     // Constructor for initializing the subsystem
     public IntakeSubsystem(HardwareMap hardwareMap, Telemetry telemetry) {
@@ -41,7 +42,8 @@ public class IntakeSubsystem {
 
     // Main method to start the intake, calling subfunctions
     public void startIntake(Gamepad gamepad) {
-        if (gamepad.a) {
+        if (gamepad.a && !intake_started) {
+            intake_started = true;
             extendSlide();
             setWristPosition(0.5, 0.5); // Initial wrist position
             setOrientation();
@@ -52,17 +54,14 @@ public class IntakeSubsystem {
             openClaw();
             resetWrist();
             retractSlide();
+            stopIntake();
         }
     }
 
     // 1. Slide extending outward
     private void extendSlide() {
-        slideMotor.setTargetPosition(final_pos_motor);
+        slideMotor.setTargetPosition(final_in_pos_motor);
         slideMotor.setPower(motor_extend_speed);
-        while (slideMotor.isBusy()) {
-            telemetry.addData("Current Position", slideMotor.getCurrentPosition());
-            telemetry.update();
-        }
         slideMotor.setPower(0);
     }
 
@@ -107,5 +106,6 @@ public class IntakeSubsystem {
         clawServo.setPosition(0.0);
         telemetry.addData("Intake", "Stopped");
         telemetry.update();
+        intake_started = false;
     }
 }
