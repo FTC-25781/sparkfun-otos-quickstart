@@ -4,23 +4,20 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 public class IntakeSubsystem implements Subsystem {
     private final DcMotor slideMotor;
+    private final DcMotor verticalSlideMotor;
     private final Servo wristServo1;
     private final Servo wristServo2;
     private final Servo orientationServo;
     private final Servo clawServo;
     private final Telemetry telemetry;
 
-    VisionAngleSub servoOrientation;
-
     int final_pos_motor = 800;
     int final_in_pos_motor = 0;
     double motor_extend_speed = 0.5;
-    boolean intake_started = false;
 
     // Constructor for initializing the subsystem
     public IntakeSubsystem(HardwareMap hardwareMap, Telemetry telemetry) {
@@ -30,84 +27,93 @@ public class IntakeSubsystem implements Subsystem {
         wristServo2 = hardwareMap.get(Servo.class, "wristServo2");
         orientationServo = hardwareMap.get(Servo.class, "orientationServo");
         clawServo = hardwareMap.get(Servo.class, "clawServo");
+        verticalSlideMotor = hardwareMap.get(DcMotor.class, "verticalSlideMotor");
 
         slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        // Set Zero Power Behavior to BRAKE
         slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        servoOrientation = new VisionAngleSub();
+        verticalSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        verticalSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         clawServo.setPosition(0.0);
         orientationServo.setPosition(0.0);
     }
 
-    // Main method to start the intake, calling subfunctions
-    public void startIntake(Gamepad gamepad) {
-        if (gamepad.a && !intake_started) {
-            intake_started = true;
-            extendSlide();
-            setWristPosition(0.5, 0.5); // Initial wrist position
-            setOrientation();
+    // Main control method for individual button presses
+    public void controlIntake(Gamepad gamepad) {
+        if (gamepad.a) {
             openClaw();
-            setWristPosition(0.0, 1.0); // Pick position
+        } else if (gamepad.b) {
             closeClaw();
-            setWristPosition(1.0, 0.0); // Lift wrist for drop
-            openClaw();
-            resetWrist();
-            retractSlide();
-            stopIntake();
+        }
+
+        if (gamepad.dpad_up) {
+            extendSlide(slideMotor);
+        } else if (gamepad.dpad_down) {
+            retractSlide(slideMotor);
+        }
+
+        if (gamepad.dpad_right) {
+            extendSlide(slideMotor);
+        } else if (gamepad.dpad_left) {
+            retractSlide(slideMotor);
+        }
+
+        if (gamepad.x) {
+            setWristPosition(0.0, 1.0);  // Pick position
+        } else if (gamepad.y) {
+            setWristPosition(1.0, 0.0);  // Lift position
+        } else if (gamepad.left_bumper) {
+            resetWrist();  // Reset wrist to neutral position
+        }
+
+        if (gamepad.right_trigger > 0.5) {
+            setOrientation(1.0);
+        } else if (gamepad.left_trigger > 0.5) {
+            setOrientation(0.0);
         }
     }
 
-    // 1. Slide extending outward
-    private void extendSlide() {
-        slideMotor.setTargetPosition(final_in_pos_motor);
-        slideMotor.setPower(motor_extend_speed);
-        slideMotor.setPower(0);
+    // Methods to control individual actions
+    private void extendSlide(DcMotor motor) {
+        motor.setTargetPosition(final_pos_motor);
+        motor.setPower(motor_extend_speed);
     }
 
-    // 2. Set wrist position
+    private void retractSlide(DcMotor motor) {
+        motor.setTargetPosition(final_in_pos_motor);
+        motor.setPower(-motor_extend_speed);
+    }
+
     private void setWristPosition(double wrist1, double wrist2) {
         wristServo1.setPosition(wrist1);
         wristServo2.setPosition(wrist2);
     }
 
-    // 3. Get and set the orientation value
-    private void setOrientation() {
-        double orientation = servoOrientation.getOrientation();
-        orientationServo.setPosition(orientation);
-        telemetry.addData("Claw Orientation", orientation);
+    private void setOrientation(double position) {
+        orientationServo.setPosition(position);
+        telemetry.addData("Claw Orientation", position);
         telemetry.update();
     }
 
-    // 4. Open claw
     private void openClaw() {
         clawServo.setPosition(1.0);
     }
 
-    // 6. Close claw
     private void closeClaw() {
         clawServo.setPosition(0.0);
     }
 
-    // 9. Reset wrist to neutral position
     private void resetWrist() {
         setWristPosition(0.5, 0.5);
     }
 
-    // 10. Slide retracting inward
-    private void retractSlide() {
-        slideMotor.setTargetPosition(final_in_pos_motor);
-        slideMotor.setPower(-motor_extend_speed);
-    }
-
-    // Method to stop the intake
+    // Method to stop all movements
     public void stopIntake() {
         slideMotor.setPower(0);
         clawServo.setPosition(0.0);
         telemetry.addData("Intake", "Stopped");
         telemetry.update();
-        intake_started = false;
     }
 
     @Override
