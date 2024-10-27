@@ -23,8 +23,8 @@ public class DepositSubsystem implements Subsystem {
     final double WRIST_DOWN_POS = 0.0;
 
     // Add two claw positions
-    final double CLAW_OPEN_POS = 0.69;
-    final double CLAW_CLOSED_POS = 0.9;
+    final double CLAW_OPEN_POS = 0.22;
+    final double CLAW_CLOSED_POS = 0.52;
 
     // Constructor for initializing the subsystem
     public DepositSubsystem(HardwareMap hardwareMap, Telemetry telemetry) {
