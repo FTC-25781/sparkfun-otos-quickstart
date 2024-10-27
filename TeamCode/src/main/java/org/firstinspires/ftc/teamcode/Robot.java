@@ -23,19 +23,6 @@ public class Robot {
     }
 
     public void controlIntake(Gamepad gamepad) {
-        // Claw controls
-        if (gamepad.a) {
-            intake.openClaw();
-        } else if (gamepad.b) {
-            intake.closeClaw();
-        }
-
-        //Deposit claw controls
-        if (gamepad.left_stick_y > 0) {
-            deposit.openDepositClaw();
-        } else if (gamepad.left_stick_y < 0) {
-            deposit.closeDepositClaw();
-        }
 
         // Main slide controls
         if (gamepad.dpad_up) {
@@ -44,12 +31,16 @@ public class Robot {
             intake.retractMainSlide();
         }
 
-        // Deposit slide controls
-        if (gamepad.dpad_right) {
-            deposit.extendDepositMainSlide();
-        } else if (gamepad.dpad_left) {
-            deposit.retractDepositMainSlide();
+        // Claw controls
+        if (gamepad.a) {
+            intake.openClaw();
+        } else if (gamepad.b) {
+            intake.closeClaw();
         }
+
+        //Claw Orientation controls
+        double orientationPosition = gamepad.right_trigger > 0 ? gamepad.right_trigger : gamepad.left_trigger;
+        intake.setOrientation(orientationPosition);
 
         // Wrist controls
         if (gamepad.x) {
@@ -60,15 +51,26 @@ public class Robot {
             intake.resetWrist();  // Reset wrist to neutral position
         }
 
-        if (gamepad.left_trigger > 0.0) {
+        //Deposit claw controls
+        if (gamepad.left_stick_y > 0) {
+            deposit.openDepositClaw();
+        } else if (gamepad.left_stick_y < 0) {
+            deposit.closeDepositClaw();
+        }
+
+        // Deposit slide controls
+        if (gamepad.dpad_right) {
+            deposit.extendDepositMainSlide();
+        } else if (gamepad.dpad_left) {
+            deposit.retractDepositMainSlide();
+        }
+
+        if (gamepad.right_stick_y > 0.0) {
             deposit.setDepositWristPickPosition();  // Pick position
         } else if (gamepad.right_bumper) {
             deposit.setDepositWristLiftPosition();  // Lift position
         }
 
-        // Orientation controls
-        double orientationPosition = gamepad.right_trigger > 0 ? gamepad.right_trigger : gamepad.left_trigger;
-        intake.setOrientation(orientationPosition);
     }
 
     // Method to update all subsystems
