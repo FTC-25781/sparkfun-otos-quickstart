@@ -71,7 +71,7 @@ public class DepositSubsystem implements Subsystem {
 /*    public void resetWrist() {
         wristServo1.setPosition(WRIST_DEFAULT_POS);
         wristServo2.setPosition(WRIST_DEFAULT_POS);
-    } */
+    } yey */
 
     // Method to stop all movements
     public void stopDepositIntake() {
