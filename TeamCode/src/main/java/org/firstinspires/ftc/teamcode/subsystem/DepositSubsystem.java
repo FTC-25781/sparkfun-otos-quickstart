@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -12,6 +13,7 @@ public class DepositSubsystem implements Subsystem {
     private final Servo wristServo2;
     private final Servo clawServo;
     private final Telemetry telemetry;
+    private final DigitalChannel intakeLimitSwitch;
 
     final int SLIDE_EXTEND_POS = 800;
     final int SLIDE_RETRACT_POS = 0;
@@ -33,12 +35,24 @@ public class DepositSubsystem implements Subsystem {
         wristServo1 = hardwareMap.get(Servo.class, "dwsrv1");
         wristServo2 = hardwareMap.get(Servo.class, "dwsrv2");
         clawServo = hardwareMap.get(Servo.class, "dclsrv");
+        intakeLimitSwitch = hardwareMap.get(DigitalChannel.class, "ikltsw");
+
+        // Set the limit switch to INPUT mode
+        intakeLimitSwitch.setMode(DigitalChannel.Mode.INPUT);
 
         verticalSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         verticalSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         clawServo.setPosition(CLAW_CLOSED_POS);
     }
+
+    public void runToPreset() {
+        clawServo.setPosition(CLAW_CLOSED_POS);
+        // TODO: Make sure orientation is reachable
+        retractDepositMainSlide();
+        setDepositWristLiftPosition();
+    }
+
     // Methods to control individual actions
     public void extendDepositMainSlide() {
         verticalSlideMotor.setTargetPosition(SLIDE_EXTEND_POS);
@@ -46,10 +60,12 @@ public class DepositSubsystem implements Subsystem {
     }
 
     public void retractDepositMainSlide() {
-
-        //limit position
-        verticalSlideMotor.setTargetPosition(SLIDE_RETRACT_POS);
-        verticalSlideMotor.setPower(-SLIDE_EXTEND_SPEED);
+        if (!intakeLimitSwitch.getState()) {
+            verticalSlideMotor.setPower(0);
+            verticalSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        } else {
+            verticalSlideMotor.setPower(-SLIDE_EXTEND_SPEED);
+        }
     }
     public void setDepositWristPickPosition() {
         wristServo1.setPosition(WRIST_DOWN_POS);
