@@ -13,7 +13,7 @@ public class IntakeSubsystem implements Subsystem {
     private final Servo orientationServo;
     private final Servo clawServo;
     private final Telemetry telemetry;
-    private DigitalChannel intakeLimitSwitch;
+    private final DigitalChannel intakeLimitSwitch;
 
     final int SLIDE_EXTEND_POS = 800;
     final int SLIDE_RETRACT_POS = 0;
