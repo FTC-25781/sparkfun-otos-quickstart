@@ -28,6 +28,8 @@ public class IntakeSubsystem implements Subsystem {
     final double CLAW_OPEN_POS = 0.69;
     final double CLAW_CLOSED_POS = 0.9;
 
+    final double ORIENTATION_DEFAULT_POS = 0.0;
+
     // Constructor for initializing the subsystem
     public IntakeSubsystem(HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
@@ -43,40 +45,56 @@ public class IntakeSubsystem implements Subsystem {
 
         slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        clawServo.setPosition(CLAW_CLOSED_POS);
-        orientationServo.setPosition(0.0);
     }
 
+    public void runToPreset() {
+        clawServo.setPosition(CLAW_CLOSED_POS);
+        // TODO: Make sure orientation is reachable
+        setOrientation(ORIENTATION_DEFAULT_POS);
+        retractMainSlide();
+        setWristDropPosition();
+    }
+
+    // Slide Functions
     public void extendMainSlide() {
-        if (!intakeLimitSwitch.getState()) {
-            slideMotor.setPower(0);
-        } else {
-            slideMotor.setTargetPosition(SLIDE_EXTEND_POS);
-            slideMotor.setPower(SLIDE_EXTEND_SPEED);
-        }
+        // TODO: Find slide full extend position
+        slideMotor.setTargetPosition(SLIDE_EXTEND_POS);
+        slideMotor.setPower(SLIDE_EXTEND_SPEED);
     }
 
     public void retractMainSlide() {
-        slideMotor.setTargetPosition(SLIDE_RETRACT_POS);
-        slideMotor.setPower(-SLIDE_EXTEND_SPEED);
+        if (!intakeLimitSwitch.getState()) {
+            slideMotor.setPower(0);
+            slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        } else {
+            slideMotor.setPower(-SLIDE_EXTEND_SPEED);
+        }
     }
+
+    // Wrist Functions
     public void setWristPickPosition() {
         wristServo1.setPosition(WRIST_DOWN_POS);
         wristServo2.setPosition(WRIST_UP_POS);
     }
 
-    public void setWristLiftPosition() {
+    public void setWristDropPosition() {
         wristServo1.setPosition(WRIST_UP_POS);
         wristServo2.setPosition(WRIST_DOWN_POS);
     }
 
+        public void setWristDefaultPosition() {
+        wristServo1.setPosition(WRIST_DEFAULT_POS);
+        wristServo2.setPosition(WRIST_DEFAULT_POS);
+    }
+
+    // Orientation Functions
     public void setOrientation(double position) {
         orientationServo.setPosition(position);
         telemetry.addData("Claw Orientation", position);
         telemetry.update();
     }
 
+    // Claw Functions
     public void openClaw() {
         clawServo.setPosition(CLAW_OPEN_POS);
     }
@@ -85,15 +103,9 @@ public class IntakeSubsystem implements Subsystem {
         clawServo.setPosition(CLAW_CLOSED_POS);
     }
 
-    public void resetWrist() {
-        wristServo1.setPosition(WRIST_DEFAULT_POS);
-        wristServo2.setPosition(WRIST_DEFAULT_POS);
-    }
-
     // Method to stop all movements
-    public void stopIntake() {
+    public void intakeEmergencyStop() {
         slideMotor.setPower(0);
-        clawServo.setPosition(CLAW_CLOSED_POS);
         telemetry.addData("Intake", "Stopped");
         telemetry.update();
     }

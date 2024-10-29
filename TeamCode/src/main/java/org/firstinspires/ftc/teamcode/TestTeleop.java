@@ -3,6 +3,9 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Gamepad;
+
+import org.firstinspires.ftc.teamcode.Robot;
 
 @TeleOp(name = "Test Teleop", group = "Teleop")
 public class TestTeleop extends LinearOpMode {
@@ -54,5 +57,52 @@ public class TestTeleop extends LinearOpMode {
         right_front.setPower(powerFrontRight);
         left_back.setPower(powerBackLeft);
         right_back.setPower(powerBackRight);
+
+        // Claw controls
+        if (gamepad2.a) {
+            robot.intake.openClaw();
+        } else if (gamepad2.b) {
+            robot.intake.closeClaw();
+        }
+
+        //Deposit claw controls
+        if (gamepad2.left_stick_y > 0) {
+            robot.deposit.openDepositClaw();
+        } else if (gamepad2.left_stick_y < 0) {
+            robot.deposit.closeDepositClaw();
+        }
+
+        // Main slide controls
+        if (gamepad2.dpad_up) {
+            robot.intake.extendMainSlide();
+        } else if (gamepad2.dpad_down) {
+            robot.intake.retractMainSlide();
+        }
+
+        // Deposit slide controls
+        if (gamepad2.dpad_right) {
+            robot.deposit.extendDepositMainSlide();
+        } else if (gamepad2.dpad_left) {
+            robot.deposit.retractDepositMainSlide();
+        }
+
+        // Wrist controls
+        if (gamepad2.x) {
+            robot.intake.setWristPickPosition();  // Pick position
+        } else if (gamepad2.y) {
+            robot.intake.setWristDropPosition();  // Lift position
+        } else if (gamepad2.left_bumper) {
+            robot.intake.setWristDefaultPosition();  // Reset wrist to neutral position
+        }
+
+        if (gamepad2.left_trigger > 0.0) {
+            robot.deposit.setDepositWristPickPosition();  // Pick position
+        } else if (gamepad2.right_bumper) {
+            robot.deposit.setDepositWristLiftPosition();  // Lift position
+        }
+
+        // Orientation controls
+        double orientationPosition = gamepad2.right_trigger > 0 ? gamepad2.right_trigger : gamepad2.left_trigger;
+        robot.intake.setOrientation(orientationPosition);
     }
 }

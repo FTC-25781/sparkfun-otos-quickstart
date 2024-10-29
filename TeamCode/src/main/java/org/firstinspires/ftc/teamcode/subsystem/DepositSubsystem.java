@@ -46,6 +46,8 @@ public class DepositSubsystem implements Subsystem {
     }
 
     public void retractDepositMainSlide() {
+
+        //limit position
         verticalSlideMotor.setTargetPosition(SLIDE_RETRACT_POS);
         verticalSlideMotor.setPower(-SLIDE_EXTEND_SPEED);
     }

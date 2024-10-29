@@ -9,11 +9,13 @@ import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystem.DepositSubsystem;
 import org.firstinspires.ftc.teamcode.subsystem.IntakeSubsystem;
 
+
 public class Robot {
-    private final IntakeSubsystem intake;
-    private final DepositSubsystem deposit;
-    private final MecanumDrive drive;
-    private final Telemetry telemetry;
+    public final IntakeSubsystem intake;
+    public final DepositSubsystem deposit;
+    public final MecanumDrive drive;
+    public final Telemetry telemetry;
+
 
     public Robot(HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
@@ -22,53 +24,38 @@ public class Robot {
         drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
     }
 
-    public void controlIntake(Gamepad gamepad) {
-        // Claw controls
-        if (gamepad.a) {
-            intake.openClaw();
-        } else if (gamepad.b) {
-            intake.closeClaw();
-        }
+    public void Preset() {
+        this.intake.runToPreset();
+    }
 
-        //Deposit claw controls
-        if (gamepad.left_stick_y > 0) {
-            deposit.openDepositClaw();
-        } else if (gamepad.left_stick_y < 0) {
-            deposit.closeDepositClaw();
-        }
+    public void startIntakePickup() {
+        this.intake.extendMainSlide();
+        this.intake.openClaw();
+        this.intake.setWristDefaultPosition();
+    }
 
-        // Main slide controls
-        if (gamepad.dpad_up) {
-            intake.extendMainSlide();
-        } else if (gamepad.dpad_down) {
-            intake.retractMainSlide();
-        }
+    public void startIntakeDrop() {
+        this.intake.setWristPickPosition();
+        this.intake.closeClaw();
+        this.intake.setWristDropPosition();
+        this.intake.retractMainSlide();
+    }
 
-        // Deposit slide controls
-        if (gamepad.dpad_right) {
-            deposit.extendDepositMainSlide();
-        } else if (gamepad.dpad_left) {
-            deposit.retractDepositMainSlide();
-        }
 
-        // Wrist controls
-        if (gamepad.x) {
-            intake.setWristPickPosition();  // Pick position
-        } else if (gamepad.y) {
-            intake.setWristLiftPosition();  // Lift position
-        } else if (gamepad.left_bumper) {
-            intake.resetWrist();  // Reset wrist to neutral position
-        }
+    public void startDepositPickup() {
+        this.intake.openClaw();
+        this.intake.setWristDefaultPosition();
+        this.deposit.openDepositClaw();
+        this.deposit.setDepositWristPickPosition();
+        this.deposit.retractDepositMainSlide();
+        this.deposit.closeDepositClaw();
+    }
 
-        if (gamepad.left_trigger > 0.0) {
-            deposit.setDepositWristPickPosition();  // Pick position
-        } else if (gamepad.right_bumper) {
-            deposit.setDepositWristLiftPosition();  // Lift position
-        }
-
-        // Orientation controls
-        double orientationPosition = gamepad.right_trigger > 0 ? gamepad.right_trigger : gamepad.left_trigger;
-        intake.setOrientation(orientationPosition);
+    public void startDepositDrop() {
+        this.deposit.extendDepositMainSlide();
+        this.deposit.setDepositWristLiftPosition(); //lift = drop
+        this.deposit.openDepositClaw();
+        this.deposit.closeDepositClaw();
     }
 
     // Method to update all subsystems
