@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;// Import the necessary FTC classes
+package org.firstinspires.ftc.teamcode.tests;// Import the necessary FTC classes
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -13,7 +13,7 @@ public class MotorDirection extends OpMode {
     @Override
     public void init() {
         // Initialize hardware
-        motor = hardwareMap.get(DcMotor.class, "motor"); // Replace "motor" with your motor's name in the configuration
+        motor = hardwareMap.get(DcMotor.class, "hsmot"); // Replace "motor" with your motor's name in the configuration
     }
 
     @Override

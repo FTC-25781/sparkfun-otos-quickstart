@@ -31,11 +31,11 @@ public class DepositSubsystem implements Subsystem {
     // Constructor for initializing the subsystem
     public DepositSubsystem(HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
-        verticalSlideMotor = hardwareMap.get(DcMotor.class, "vsmot");
-        wristServo1 = hardwareMap.get(Servo.class, "dwsrv1");
-        wristServo2 = hardwareMap.get(Servo.class, "dwsrv2");
-        clawServo = hardwareMap.get(Servo.class, "dclsrv");
-        intakeLimitSwitch = hardwareMap.get(DigitalChannel.class, "ikltsw");
+        verticalSlideMotor = hardwareMap.get(DcMotor.class, "vsmot"); // Motor Port 1
+        wristServo1 = hardwareMap.get(Servo.class, "dwsrv1"); // Servo Port 1
+        wristServo2 = hardwareMap.get(Servo.class, "dwsrv2"); // Servo Port 2
+        clawServo = hardwareMap.get(Servo.class, "dclsrv"); // Servo Port 3
+        intakeLimitSwitch = hardwareMap.get(DigitalChannel.class, "dpltsw"); // Digital Port 0
 
         // Set the limit switch to INPUT mode
         intakeLimitSwitch.setMode(DigitalChannel.Mode.INPUT);
