@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class DepositSubsystem implements Subsystem {
@@ -19,12 +18,12 @@ public class DepositSubsystem implements Subsystem {
     final int SLIDE_RETRACT_POS = 0;
     final double SLIDE_EXTEND_SPEED = 0.5;
 
-    // Add three wrist positions
-    final double WRIST_UP_POS = 1.0;
-//    final double WRIST_DEFAULT_POS = 0.5;
-    final double WRIST_DOWN_POS = 0.0;
+    // Wrist positions
+    final double WRIST_DROP_POS = 0.2;
+    final double WRIST_PICK_POS = 0.05;
+    final double WRIST_DEFAULT_POS = 0.1;
 
-    // Add two claw positions
+    // Claw positions
     final double CLAW_OPEN_POS = 0.22;
     final double CLAW_CLOSED_POS = 0.52;
 
@@ -48,35 +47,43 @@ public class DepositSubsystem implements Subsystem {
 
     public void runToPreset() {
         clawServo.setPosition(CLAW_CLOSED_POS);
-        // TODO: Make sure orientation is reachable
         retractDepositMainSlide();
-        setDepositWristLiftPosition();
+        setDepositWristDefaultPosition();
     }
 
-    // Methods to control individual actions
+    // Slide control methods
     public void extendDepositMainSlide() {
         verticalSlideMotor.setTargetPosition(SLIDE_EXTEND_POS);
+        verticalSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         verticalSlideMotor.setPower(SLIDE_EXTEND_SPEED);
     }
 
     public void retractDepositMainSlide() {
-        if (!intakeLimitSwitch.getState()) {
+        if (!intakeLimitSwitch.getState() && verticalSlideMotor.getCurrentPosition() != SLIDE_RETRACT_POS) {
             verticalSlideMotor.setPower(0);
             verticalSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         } else {
             verticalSlideMotor.setPower(-SLIDE_EXTEND_SPEED);
         }
     }
+
+    // Wrist control methods
+    public void setDepositWristDropPosition() {
+        wristServo1.setPosition(WRIST_DROP_POS);
+        wristServo2.setPosition(WRIST_DROP_POS);
+    }
+
     public void setDepositWristPickPosition() {
-        wristServo1.setPosition(WRIST_DOWN_POS);
-        wristServo2.setPosition(WRIST_UP_POS);
+        wristServo1.setPosition(WRIST_PICK_POS);
+        wristServo2.setPosition(WRIST_PICK_POS);
     }
 
-    public void setDepositWristLiftPosition() {
-        wristServo1.setPosition(WRIST_UP_POS);
-        wristServo2.setPosition(WRIST_DOWN_POS);
+    public void setDepositWristDefaultPosition() {
+        wristServo1.setPosition(WRIST_DEFAULT_POS);
+        wristServo2.setPosition(WRIST_DEFAULT_POS);
     }
 
+    // Claw control methods
     public void openDepositClaw() {
         clawServo.setPosition(CLAW_OPEN_POS);
     }
@@ -84,12 +91,6 @@ public class DepositSubsystem implements Subsystem {
     public void closeDepositClaw() {
         clawServo.setPosition(CLAW_CLOSED_POS);
     }
-
-// TODO: Make sure we need this code
-/*    public void resetWrist() {
-        wristServo1.setPosition(WRIST_DEFAULT_POS);
-        wristServo2.setPosition(WRIST_DEFAULT_POS);
-    } yey */
 
     // Method to stop all movements
     public void stopDepositIntake() {
@@ -101,6 +102,6 @@ public class DepositSubsystem implements Subsystem {
 
     @Override
     public void update() {
-
+        // Placeholder for periodic updates if needed
     }
 }
