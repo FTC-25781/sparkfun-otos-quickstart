@@ -38,6 +38,8 @@ public class DepositSubsystem implements Subsystem {
         verticalSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         clawServo.setPosition(CLAW_CLOSED_POS);
+
+        wristServo1.setDirection(Servo.Direction.REVERSE);
     }
 
     public void runToPreset() {
