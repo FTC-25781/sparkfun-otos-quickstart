@@ -29,7 +29,7 @@ public class DepositSubsystem implements Subsystem {
         wristServo1 = hardwareMap.get(Servo.class, "dwsrv1"); // Servo Port 1
         wristServo2 = hardwareMap.get(Servo.class, "dwsrv2"); // Servo Port 0
         clawServo = hardwareMap.get(Servo.class, "dclsrv"); // Servo Port 3
-        intakeLimitSwitch = hardwareMap.get(DigitalChannel.class, "dpltsw"); // Digital Port 0
+        intakeLimitSwitch = hardwareMap.get(DigitalChannel.class, "dpltsw"); // Digital Port 2
 
         // Set the limit switch to INPUT mode
         intakeLimitSwitch.setMode(DigitalChannel.Mode.INPUT);
