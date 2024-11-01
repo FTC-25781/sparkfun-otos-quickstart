@@ -26,24 +26,26 @@ public class MatchTeleop extends LinearOpMode {
         right_front = hardwareMap.get(DcMotor.class, "right_front"); // Motor Port 2
         left_back = hardwareMap.get(DcMotor.class, "left_back");     // Motor Port 1
         right_back = hardwareMap.get(DcMotor.class, "right_back");   // Motor Port 0
-        MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
+        drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
 
+        robot.Preset();
         waitForStart();
 
         while (opModeIsActive()) {
+            // Game pad stick inputs for movement
             double x = gamepad1.left_stick_x;
             double y = -gamepad1.left_stick_y; // Invert Y-axis
             double rx = gamepad1.right_stick_x;
 
             drive.setDrivePowers(new PoseVelocity2d(
-                    new Vector2d(
-                            -gamepad1.left_stick_y,
-                            -gamepad1.left_stick_x
-                    ),
+                    new Vector2d(-gamepad1.left_stick_y, -gamepad1.left_stick_x),
                     -gamepad1.right_stick_x
             ));
 
             setDrivePower(x, y, rx);
+            updateIntakeControls();
+            updateDepositControls();
+            sendTelemetry();
             robot.update();
         }
     }
@@ -54,7 +56,7 @@ public class MatchTeleop extends LinearOpMode {
         double powerBackLeft = y - x + rx;
         double powerBackRight = y + x - rx;
 
-        // Normalize the motor powers
+        // Normalize motor powers
         double max = Math.max(Math.abs(powerFrontLeft), Math.max(Math.abs(powerFrontRight),
                 Math.max(Math.abs(powerBackLeft), Math.abs(powerBackRight))));
 
@@ -70,7 +72,9 @@ public class MatchTeleop extends LinearOpMode {
         right_front.setPower(powerFrontRight);
         left_back.setPower(powerBackLeft);
         right_back.setPower(powerBackRight);
+    }
 
+    private void updateIntakeControls() {
         // Claw controls
         if (gamepad2.a) {
             robot.intake.openClaw();
@@ -78,15 +82,29 @@ public class MatchTeleop extends LinearOpMode {
             robot.intake.closeClaw();
         }
 
+        // Main slide controls
+        robot.intake.manualExtension(gamepad2.left_stick_y);
+
+        // Wrist controls
+        if (gamepad2.x) {
+            robot.intake.setWristPickPosition();  // Pick position
+        } else if (gamepad2.y) {
+            robot.intake.setWristDropPosition();  // Drop position
+        } else if (gamepad2.left_bumper) {
+            robot.intake.setWristDefaultPosition();  // Neutral position
+        }
+
+        // Orientation control
+        robot.intake.setOrientation(gamepad2.right_stick_y);
+    }
+
+    private void updateDepositControls() {
         // Deposit claw controls
         if (gamepad2.dpad_up) {
             robot.deposit.openDepositClaw();
         } else if (gamepad2.dpad_down) {
             robot.deposit.closeDepositClaw();
         }
-
-        // Main slide controls
-        robot.intake.manualExtension(gamepad2.left_stick_y);
 
         // Deposit slide controls
         if (gamepad2.dpad_right) {
@@ -95,25 +113,15 @@ public class MatchTeleop extends LinearOpMode {
             robot.deposit.retractDepositMainSlide();
         }
 
-        // Wrist controls
-        if (gamepad2.x) {
-            robot.intake.setWristPickPosition();  // Pick position
-        } else if (gamepad2.y) {
-            robot.intake.setWristDropPosition();  // Drop position
-        } else if (gamepad2.left_bumper) {
-            robot.intake.setWristDefaultPosition();  // Reset to neutral position
-        }
-
+        // Deposit wrist controls
         if (gamepad2.left_trigger > 0.0) {
-            robot.deposit.setDepositWristPickPosition();  // Pick position
+            robot.deposit.setDepositWristPickPosition();
         } else if (gamepad2.right_bumper) {
-            robot.deposit.setDepositWristLiftPosition();  // Lift position
+            robot.deposit.setDepositWristDropPosition();
         }
+    }
 
-        // Orientation control
-        robot.intake.setOrientation(gamepad2.right_stick_y);
-
-        // Telemetry data
+    private void sendTelemetry() {
         telemetry.addData("Position", orientationPosition);
         telemetry.addData("Wrist-1 position", robot.intake.wristServo1.getPosition());
         telemetry.addData("Wrist-2 position", robot.intake.wristServo2.getPosition());

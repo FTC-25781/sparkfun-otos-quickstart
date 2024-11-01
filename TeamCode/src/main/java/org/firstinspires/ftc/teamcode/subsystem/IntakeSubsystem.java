@@ -38,6 +38,8 @@ public class IntakeSubsystem implements Subsystem {
 
         slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        wristServo1.setDirection(Servo.Direction.REVERSE);
     }
 
     public void runToPreset() {
