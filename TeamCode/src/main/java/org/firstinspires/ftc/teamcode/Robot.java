@@ -25,8 +25,8 @@ public class Robot {
     }
 
     public void Preset() {
-        this.intake.runToPreset();
         this.deposit.runToPreset();
+        this.intake.runToPreset();
     }
 
     public void startIntakePickup() {
@@ -54,7 +54,7 @@ public class Robot {
 
     public void startDepositDrop() {
         this.deposit.extendDepositMainSlide();
-        this.deposit.setDepositWristDropPosition(); //lift = drop
+        this.deposit.setDepositWristDropPosition();
         this.deposit.openDepositClaw();
         this.deposit.closeDepositClaw();
     }

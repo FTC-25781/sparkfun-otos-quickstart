@@ -28,6 +28,7 @@ public class MatchTeleop extends LinearOpMode {
         right_back = hardwareMap.get(DcMotor.class, "right_back");   // Motor Port 0
         drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
 
+        robot.Preset();
         waitForStart();
 
         while (opModeIsActive()) {

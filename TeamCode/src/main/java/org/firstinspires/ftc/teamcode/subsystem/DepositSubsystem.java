@@ -18,11 +18,6 @@ public class DepositSubsystem implements Subsystem {
     final int SLIDE_RETRACT_POS = 0;
     final double SLIDE_EXTEND_SPEED = 0.5;
 
-    // Wrist positions
-    final double WRIST_DROP_POS = 0.2;
-    final double WRIST_PICK_POS = 0.05;
-    final double WRIST_DEFAULT_POS = 0.1;
-
     // Claw positions
     final double CLAW_OPEN_POS = 0.22;
     final double CLAW_CLOSED_POS = 0.52;
@@ -32,7 +27,7 @@ public class DepositSubsystem implements Subsystem {
         this.telemetry = telemetry;
         verticalSlideMotor = hardwareMap.get(DcMotor.class, "vsmot"); // Motor Port 1
         wristServo1 = hardwareMap.get(Servo.class, "dwsrv1"); // Servo Port 1
-        wristServo2 = hardwareMap.get(Servo.class, "dwsrv2"); // Servo Port 2
+        wristServo2 = hardwareMap.get(Servo.class, "dwsrv2"); // Servo Port 0
         clawServo = hardwareMap.get(Servo.class, "dclsrv"); // Servo Port 3
         intakeLimitSwitch = hardwareMap.get(DigitalChannel.class, "dpltsw"); // Digital Port 0
 
@@ -69,18 +64,18 @@ public class DepositSubsystem implements Subsystem {
 
     // Wrist control methods
     public void setDepositWristDropPosition() {
-        wristServo1.setPosition(WRIST_DROP_POS);
-        wristServo2.setPosition(WRIST_DROP_POS);
+        wristServo1.setPosition(0.2);
+        wristServo2.setPosition(0.2);
     }
 
     public void setDepositWristPickPosition() {
-        wristServo1.setPosition(WRIST_PICK_POS);
-        wristServo2.setPosition(WRIST_PICK_POS);
+        wristServo1.setPosition(0.05);
+        wristServo2.setPosition(0.05);
     }
 
     public void setDepositWristDefaultPosition() {
-        wristServo1.setPosition(WRIST_DEFAULT_POS);
-        wristServo2.setPosition(WRIST_DEFAULT_POS);
+        wristServo1.setPosition(0.1);
+        wristServo2.setPosition(0.1);
     }
 
     // Claw control methods
