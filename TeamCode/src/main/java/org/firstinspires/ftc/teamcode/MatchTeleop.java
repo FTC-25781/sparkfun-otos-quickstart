@@ -22,10 +22,10 @@ public class MatchTeleop extends LinearOpMode {
         // Initialize the Robot and motor mappings
         robot = new Robot(hardwareMap, telemetry);
 
-        left_front = hardwareMap.get(DcMotor.class, "left_front");  // Motor Port 3
-        right_front = hardwareMap.get(DcMotor.class, "right_front"); // Motor Port 2
-        left_back = hardwareMap.get(DcMotor.class, "left_back");     // Motor Port 1
-        right_back = hardwareMap.get(DcMotor.class, "right_back");   // Motor Port 0
+        left_front = hardwareMap.get(DcMotor.class, "left_front");  // Motor Port 2
+        right_front = hardwareMap.get(DcMotor.class, "right_front"); // Motor Port 3
+        left_back = hardwareMap.get(DcMotor.class, "left_back");     // Motor Port 0
+        right_back = hardwareMap.get(DcMotor.class, "right_back");   // Motor Port 1
         drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
 
         robot.Preset();
