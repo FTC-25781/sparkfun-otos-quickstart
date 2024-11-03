@@ -13,6 +13,8 @@ import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 public class MatchTeleop extends LinearOpMode {
 
     Robot robot;
+    DcMotor slideMotor;
+
     MecanumDrive drive;
     DcMotor left_front, right_front, left_back, right_back;
     public double orientationPosition = 0.0;
@@ -28,7 +30,7 @@ public class MatchTeleop extends LinearOpMode {
         right_back = hardwareMap.get(DcMotor.class, "right_back");   // Motor Port 1
         drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
 
-        robot.Preset();
+        //robot.Preset();
         waitForStart();
 
         while (opModeIsActive()) {
@@ -43,9 +45,6 @@ public class MatchTeleop extends LinearOpMode {
             ));
 
             setDrivePower(x, y, rx);
-            updateIntakeControls();
-            updateDepositControls();
-            sendTelemetry();
             robot.update();
         }
     }
@@ -72,51 +71,63 @@ public class MatchTeleop extends LinearOpMode {
         right_front.setPower(powerFrontRight);
         left_back.setPower(powerBackLeft);
         right_back.setPower(powerBackRight);
+
+        updateIntakeControls();
+        updateDepositControls();
+        sendTelemetry();
     }
 
     private void updateIntakeControls() {
         // Claw controls
         if (gamepad2.a) {
             robot.intake.openClaw();
-        } else if (gamepad2.b) {
+        }
+        if (gamepad2.b) {
             robot.intake.closeClaw();
         }
 
         // Main slide controls
         robot.intake.manualExtension(gamepad2.left_stick_y);
+        robot.deposit.manualExtension(gamepad2.right_stick_y);
+
 
         // Wrist controls
         if (gamepad2.x) {
             robot.intake.setWristPickPosition();  // Pick position
-        } else if (gamepad2.y) {
+        }
+        if (gamepad2.y) {
             robot.intake.setWristDropPosition();  // Drop position
-        } else if (gamepad2.left_bumper) {
+        }
+        if (gamepad2.left_bumper) {
             robot.intake.setWristDefaultPosition();  // Neutral position
         }
-
         // Orientation control
-        robot.intake.setOrientation(gamepad2.right_stick_y);
+        // robot.intake.setOrientation(gamepad2.right_stick_y);
     }
 
     private void updateDepositControls() {
         // Deposit claw controls
         if (gamepad2.dpad_up) {
             robot.deposit.openDepositClaw();
-        } else if (gamepad2.dpad_down) {
+        }
+        if (gamepad2.dpad_down) {
             robot.deposit.closeDepositClaw();
         }
 
         // Deposit slide controls
         if (gamepad2.dpad_right) {
             robot.deposit.extendDepositMainSlide();
-        } else if (gamepad2.dpad_left) {
+        }
+        if (gamepad2.dpad_left) {
             robot.deposit.retractDepositMainSlide();
         }
 
         // Deposit wrist controls
         if (gamepad2.left_trigger > 0.0) {
             robot.deposit.setDepositWristPickPosition();
-        } else if (gamepad2.right_bumper) {
+        }
+
+        if (gamepad2.right_bumper) {
             robot.deposit.setDepositWristDropPosition();
         }
     }
@@ -126,6 +137,10 @@ public class MatchTeleop extends LinearOpMode {
         telemetry.addData("Wrist-1 position", robot.intake.wristServo1.getPosition());
         telemetry.addData("Wrist-2 position", robot.intake.wristServo2.getPosition());
         telemetry.addData("Horizontal Slide power", robot.intake.slideMotor.getPower());
+        telemetry.addData("Horizontal Slide position", robot.intake.slideMotor.getCurrentPosition());
+
+
+
         telemetry.update();
     }
 }

@@ -15,6 +15,14 @@ public class IntakeSubsystem implements Subsystem {
     private final Telemetry telemetry;
     private final DigitalChannel intakeLimitSwitch;
 
+    private double WRIST_1_DEFAULT = 0.4;
+    private double WRIST_2_DEFAULT = 0.4;
+
+    private double WRIST_1_DROP = 0.25;
+    private double WRIST_2_DROP = 0.25;
+    private double WRIST_1_PICKUP = 0.55;
+    private double WRIST_2_PICKUP = 0.55;
+
     final int SLIDE_EXTEND_POS = 800;
     final double SLIDE_EXTEND_SPEED = 0.5;
 
@@ -36,21 +44,21 @@ public class IntakeSubsystem implements Subsystem {
 
         intakeLimitSwitch.setMode(DigitalChannel.Mode.INPUT);
 
-        slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         wristServo1.setDirection(Servo.Direction.REVERSE);
     }
 
     public void runToPreset() {
-        clawServo.setPosition(CLAW_CLOSED_POS);
-        setOrientation(ORIENTATION_DEFAULT_POS);
-        retractMainSlide();
+//        clawServo.setPosition(CLAW_CLOSED_POS);
+        setOrientation(1.0);
+        //retractMainSlide();
     }
 
     // Slide Functions
     public void manualExtension(double y) {
-        slideMotor.setPower(Math.max(-1, Math.min(1, y))); // Clamp to valid motor power range
+        slideMotor.setPower(y); // Clamp to valid motor power range
     }
 
     public void extendMainSlide() {
@@ -60,28 +68,28 @@ public class IntakeSubsystem implements Subsystem {
     }
 
     public void retractMainSlide() {
-        if (!intakeLimitSwitch.getState() && slideMotor.getCurrentPosition() != 0) {
-            slideMotor.setPower(0);
-            slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        } else {
-            slideMotor.setPower(-SLIDE_EXTEND_SPEED);
-        }
+//        if (!intakeLimitSwitch.getState() && slideMotor.getCurrentPosition() != 0) {
+//            slideMotor.setPower(0);
+//            slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        } else {
+//            slideMotor.setPower(-SLIDE_EXTEND_SPEED);
+//        }
     }
 
     // Wrist Functions
     public void setWristDropPosition() {
-        wristServo1.setPosition(0.2);
-        wristServo2.setPosition(0.2);
+        wristServo1.setPosition(WRIST_1_DROP);
+        wristServo2.setPosition(WRIST_2_DROP);
     }
 
     public void setWristPickPosition() {
-        wristServo1.setPosition(0.05);
-        wristServo2.setPosition(0.05);
+        wristServo1.setPosition(WRIST_1_PICKUP);
+        wristServo2.setPosition(WRIST_2_PICKUP);
     }
 
     public void setWristDefaultPosition() {
-        wristServo1.setPosition(0.1);
-        wristServo2.setPosition(0.1);
+        wristServo1.setPosition(WRIST_1_DEFAULT);
+        wristServo2.setPosition(WRIST_2_DEFAULT);
     }
 
     // Orientation Functions
@@ -103,6 +111,6 @@ public class IntakeSubsystem implements Subsystem {
 
     @Override
     public void update() {
-        // Placeholder for periodic updates if needed
+
     }
 }
