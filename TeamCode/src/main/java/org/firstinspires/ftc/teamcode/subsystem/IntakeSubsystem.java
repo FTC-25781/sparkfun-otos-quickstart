@@ -16,7 +16,7 @@ public class IntakeSubsystem implements Subsystem {
     private final DigitalChannel intakeLimitSwitch;
 
     private static final double POSITION_INCREMENT = 0.01;
-
+//
     private double WRIST_1_DEFAULT = 0.4;
     private double WRIST_2_DEFAULT = 0.4;
 
