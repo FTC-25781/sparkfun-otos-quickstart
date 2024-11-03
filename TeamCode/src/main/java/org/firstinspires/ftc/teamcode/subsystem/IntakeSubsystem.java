@@ -20,8 +20,8 @@ public class IntakeSubsystem implements Subsystem {
     private double WRIST_1_DEFAULT = 0.4;
     private double WRIST_2_DEFAULT = 0.4;
 
-    private double WRIST_1_DROP = 0.2;
-    private double WRIST_2_DROP = 0.2;
+    private double WRIST_1_DROP = 0.25;
+    private double WRIST_2_DROP = 0.25;
     private double WRIST_1_PICKUP = 0.55;
     private double WRIST_2_PICKUP = 0.55;
 
