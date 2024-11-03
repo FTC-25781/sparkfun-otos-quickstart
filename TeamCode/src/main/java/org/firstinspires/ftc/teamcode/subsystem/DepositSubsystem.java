@@ -19,7 +19,7 @@ public class DepositSubsystem implements Subsystem {
     final double SLIDE_EXTEND_SPEED = 0.5;
 
     // Claw positions
-    final double CLAW_OPEN_POS = 0.22;
+    final double CLAW_OPEN_POS = 0.42;
     final double CLAW_CLOSED_POS = 0.52;
 
     private double WRIST_1_DEFAULT = 1.0;
