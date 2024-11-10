@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class IntakeClawSubsystem<orientationServo> {
+public class IntakeClawSubsystem <orientationServo> {
     private final Telemetry telemetry;
     private final Servo clawServo;
     private Servo orientationServo;
@@ -45,6 +45,6 @@ public class IntakeClawSubsystem<orientationServo> {
     }
 
 
-        }
+}
 
 

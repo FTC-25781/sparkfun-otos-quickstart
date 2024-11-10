@@ -47,7 +47,7 @@ public class DepositSubsystem implements Subsystem {
         //verticalSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         verticalSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        clawServo.setPosition(CLAW_CLOSED_POS);
+
     }
 
     public void runToPreset() {

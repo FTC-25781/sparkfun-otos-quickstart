@@ -1,4 +1,37 @@
 package org.firstinspires.ftc.teamcode.subsystem.Deposit;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
 public class DepositSlideSubsystem {
+    private DigitalChannel intakeLimitSwitch;
+    private DcMotor verticalSlideMotor;
+
+    final int SLIDE_EXTEND_POS = 800;
+    final int SLIDE_RETRACT_POS = 0;
+    final double SLIDE_EXTEND_SPEED = 0.5;
+
+    public void DepositSubsystem(HardwareMap hardwareMap, Telemetry telemetry) {
+        verticalSlideMotor = hardwareMap.get(DcMotor.class, "vsmot"); // Motor Port 1
+        intakeLimitSwitch = hardwareMap.get(DigitalChannel.class, "dpltsw"); // Digital Port 0
+    }
+
+    public void retractDepositMainSlide() {
+        if (verticalSlideMotor.getCurrentPosition() != SLIDE_RETRACT_POS) {
+            verticalSlideMotor.setTargetPosition(SLIDE_RETRACT_POS);
+            verticalSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            verticalSlideMotor.setPower(-SLIDE_EXTEND_SPEED);
+
+        } else {
+
+            verticalSlideMotor.setPower(0);
+        }
+    }
+
+    public void update() {
+
+    }
+
 }

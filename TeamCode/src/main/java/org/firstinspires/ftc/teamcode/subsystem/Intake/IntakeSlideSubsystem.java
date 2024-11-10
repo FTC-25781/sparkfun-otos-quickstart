@@ -1,16 +1,22 @@
 package org.firstinspires.ftc.teamcode.subsystem.Intake;
 
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 public class IntakeSlideSubsystem {
     public DcMotor slideMotor;
+    private DigitalChannel intakeLimitSwitch;
+
     final int SLIDE_EXTEND_POS = 800;
     final double SLIDE_EXTEND_SPEED = 0.5;
 
     public IntakeSlideSubsystem(HardwareMap hardwareMap) {
         slideMotor = hardwareMap.get(DcMotor.class, "hsmot"); // Motor Port 0
         slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        intakeLimitSwitch = hardwareMap.get(DigitalChannel.class, "inltsw"); // Digital Port 0
+
+        intakeLimitSwitch.setMode(DigitalChannel.Mode.INPUT);
 
     }
 
@@ -28,5 +34,4 @@ public class IntakeSlideSubsystem {
     }
 
     public void retractMainSlide(){}
-
-}
+        }
