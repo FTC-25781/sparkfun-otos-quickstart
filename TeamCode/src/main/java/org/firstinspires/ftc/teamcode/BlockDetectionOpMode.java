@@ -28,23 +28,17 @@ public class BlockDetectionOpMode extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        // Initialize hardware
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                 "cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(
                 hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 
-        // This is the servo controlling the claw
         clawServo = hardwareMap.get(Servo.class, "clawServo");
+        clawServo.setPosition(0.0);  // Ensure the claw is at the starting position
+        sleep(500);
 
-        // Reset the claw servo to 0.0 at the start of the OpMode
-        clawServo.setPosition(0.0);
-        sleep(500);  // Allow half a second for the servo to reach the position
-
-        // Set the OpenCV pipeline
-        webcam.setPipeline(new BlockDetectionPipeline());
-
-        // Open the camera asynchronously
+        BlockDetectionPipeline blkp =   new BlockDetectionPipeline();
+        webcam.setPipeline(blkp);
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
@@ -60,37 +54,46 @@ public class BlockDetectionOpMode extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
+            if(gamepad1.a) blkp.hasDetectedBlock = false;
             telemetry.update();
             sleep(50);
         }
     }
 
     class BlockDetectionPipeline extends OpenCvPipeline {
+        private static final double TOLERANCE_DEGREES = 5.0;
+        private static final double SMOOTHING_FACTOR = 0.1;
+        private double lastServoPosition = 0.0;
+        public boolean hasDetectedBlock = false;
+
         @Override
         public Mat processFrame(Mat input) {
-            // Convert to HSV
+
+            if (hasDetectedBlock) return input;
+
+            // Ensure the servo starts at the position 0
+            clawServo.setPosition(0);
+            sleep(2000);
+
             Mat hsv = new Mat();
             Imgproc.cvtColor(input, hsv, Imgproc.COLOR_RGB2HSV);
 
-            // Define HSV range for blue
+            // Define HSV ranges for blue, red, and yellow
             Scalar lowerBlue = new Scalar(105, 170, 50);
             Scalar upperBlue = new Scalar(130, 255, 255);
 
-            // Define HSV range for red
-            Scalar lowerRed1 = new Scalar(0, 170, 50);    // Lower bound of red (for values near 0 in hue)
-            Scalar upperRed1 = new Scalar(10, 255, 255);  // Upper bound of red (for values near 0 in hue)
-            Scalar lowerRed2 = new Scalar(170, 170, 50);  // Lower bound of red (for values near 180 in hue)
-            Scalar upperRed2 = new Scalar(180, 255, 255); // Upper bound of red (for values near 180 in hue)
+            Scalar lowerRed1 = new Scalar(0, 170, 50);
+            Scalar upperRed1 = new Scalar(10, 255, 255);
+            Scalar lowerRed2 = new Scalar(170, 170, 50);
+            Scalar upperRed2 = new Scalar(180, 255, 255);
 
-            // Define HSV range for yellow
             Scalar lowerYellow = new Scalar(20, 170, 50);
             Scalar upperYellow = new Scalar(40, 255, 255);
 
-            // Mask blue areas
+            // Masks for blue, red, and yellow
             Mat blueMask = new Mat();
             Core.inRange(hsv, lowerBlue, upperBlue, blueMask);
 
-            // Mask red areas
             Mat redMask1 = new Mat();
             Mat redMask2 = new Mat();
             Core.inRange(hsv, lowerRed1, upperRed1, redMask1);
@@ -98,16 +101,15 @@ public class BlockDetectionOpMode extends LinearOpMode {
             Mat redMask = new Mat();
             Core.add(redMask1, redMask2, redMask);
 
-            // Mask yellow areas
             Mat yellowMask = new Mat();
             Core.inRange(hsv, lowerYellow, upperYellow, yellowMask);
 
-            // Combine all masks into one
+            // Combine all masks
             Mat combinedMask = new Mat();
             Core.bitwise_or(blueMask, redMask, combinedMask);
             Core.bitwise_or(combinedMask, yellowMask, combinedMask);
 
-            // Blur the mask to reduce noise
+            // Blur to reduce noise
             Imgproc.GaussianBlur(combinedMask, combinedMask, new Size(5, 5), 0);
 
             // Find contours
@@ -115,41 +117,61 @@ public class BlockDetectionOpMode extends LinearOpMode {
             Mat hierarchy = new Mat();
             Imgproc.findContours(combinedMask, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
+            // Variables to track the largest block found
+            double maxArea = 0;
+            RotatedRect bestRect = null;
+
             // Process contours
             for (MatOfPoint contour : contours) {
                 double area = Imgproc.contourArea(contour);
-                if (area > 500) {
-                    // Fit a rotated rectangle around the contour
+                if (area > 500 && area > maxArea) { // Only consider larger blocks
+                    maxArea = area;
                     MatOfPoint2f contour2f = new MatOfPoint2f(contour.toArray());
-                    RotatedRect rect = Imgproc.minAreaRect(contour2f);
-
-                    // Draw the bounding box
-                    Point[] points = new Point[4];
-                    rect.points(points);
-                    for (int i = 0; i < 4; i++) {
-                        Imgproc.line(input, points[i], points[(i + 1) % 4], new Scalar(0, 255, 0), 2);
-                    }
-
-                    // Get the angle of rotation
-                    double angle = rect.angle;
-                    if (rect.size.width < rect.size.height) {
-                        angle = -angle;
-                    } else {
-                        angle = 90 - angle;
-                    }
-
-                    // Convert angle to a value between 0 and 180
-                    angle = Math.abs(angle) % 180;
-
-                    // Map angle to servo position (0.0 to 1.0)
-                    double servoPosition = angle / 180.0;
-                    clawServo.setPosition(servoPosition);
-
-                    telemetry.addData("Block angle (degrees)", angle);
-                    telemetry.addData("Servo position", servoPosition);
+                    bestRect = Imgproc.minAreaRect(contour2f);
                 }
             }
 
+            // If a block is detected, lock onto it
+            if (bestRect != null) {
+                // Draw bounding box for the detected block
+                Point[] points = new Point[4];
+                bestRect.points(points);
+                for (int i = 0; i < 4; i++) {
+                    Imgproc.line(input, points[i], points[(i + 1) % 4], new Scalar(0, 255, 0), 2);
+                }
+
+                // Calculate block angle
+                double angle = bestRect.angle;
+
+                // Adjust the angle based on the camera's perspective
+                if (bestRect.size.width < bestRect.size.height) {
+                    angle = -angle; // Flip for vertical block alignment
+                } else {
+                    angle = 90 - angle; // Adjust for horizontal alignment
+                }
+
+                // Flip the angle to align left to right (camera orientation)
+                angle = Math.abs(angle) % 180;
+
+                // Map the angle to the servo's range (0.0 to 0.5)
+                hasDetectedBlock = true;
+                double servoTargetPosition = (angle / 90.0) * 0.5;
+
+                // Gradually move the servo towards the target position (0.0)
+                if (Math.abs(lastServoPosition - 0.0) > TOLERANCE_DEGREES) {
+                    lastServoPosition = lastServoPosition - SMOOTHING_FACTOR * (lastServoPosition - 0.0);
+                    clawServo.setPosition(lastServoPosition);
+                } else {
+                    clawServo.setPosition(0.0); // Lock servo at position 0
+                }
+
+                // For debugging, output the corresponding angle for the servo position
+                double mappedAngle = servoTargetPosition * 90; // Map the servo position back to degrees
+
+                telemetry.addData("Detected Block Angle (degrees)", angle);
+                telemetry.addData("Mapped Angle (degrees)", mappedAngle);
+                telemetry.addData("Servo Target Position", servoTargetPosition);
+            }
             return input;
         }
     }
