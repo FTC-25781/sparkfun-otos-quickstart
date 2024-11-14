@@ -21,24 +21,27 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import java.util.ArrayList;
 import java.util.List;
 
-@TeleOp(name = "BlockDetectionOpMode", group = "Linear Opmode")
-public class BlockDetectionOpMode extends LinearOpMode {
+@TeleOp(name = "visionTest", group = "Linear Opmode")
+public class blockDetection extends LinearOpMode {
     private OpenCvCamera webcam;
     private Servo clawServo;
 
     @Override
     public void runOpMode() {
+        // Initialize hardware
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                 "cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(
                 hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 
         clawServo = hardwareMap.get(Servo.class, "clawServo");
-        clawServo.setPosition(0.0);  // Ensure the claw is at the starting position
+
+        // Reset the claw servo to 0.0 at the start of the OpMode
+        clawServo.setPosition(0.0);
         sleep(500);
 
-        BlockDetectionPipeline blkp =   new BlockDetectionPipeline();
-        webcam.setPipeline(blkp);
+        webcam.setPipeline(new BlockDetectionPipeline());
+
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
@@ -54,31 +57,22 @@ public class BlockDetectionOpMode extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            if(gamepad1.a) blkp.hasDetectedBlock = false;
             telemetry.update();
             sleep(50);
         }
     }
 
     class BlockDetectionPipeline extends OpenCvPipeline {
-        private static final double TOLERANCE_DEGREES = 5.0;
         private static final double SMOOTHING_FACTOR = 0.1;
         private double lastServoPosition = 0.0;
-        public boolean hasDetectedBlock = false;
 
         @Override
         public Mat processFrame(Mat input) {
-
-            if (hasDetectedBlock) return input;
-
-            // Ensure the servo starts at the position 0
-            clawServo.setPosition(0);
-            sleep(2000);
-
+            // Convert to HSV
             Mat hsv = new Mat();
             Imgproc.cvtColor(input, hsv, Imgproc.COLOR_RGB2HSV);
 
-            // Define HSV ranges for blue, red, and yellow
+            // Define HSV ranges
             Scalar lowerBlue = new Scalar(105, 170, 50);
             Scalar upperBlue = new Scalar(130, 255, 255);
 
@@ -90,7 +84,7 @@ public class BlockDetectionOpMode extends LinearOpMode {
             Scalar lowerYellow = new Scalar(20, 170, 50);
             Scalar upperYellow = new Scalar(40, 255, 255);
 
-            // Masks for blue, red, and yellow
+            // Create masks
             Mat blueMask = new Mat();
             Core.inRange(hsv, lowerBlue, upperBlue, blueMask);
 
@@ -104,12 +98,11 @@ public class BlockDetectionOpMode extends LinearOpMode {
             Mat yellowMask = new Mat();
             Core.inRange(hsv, lowerYellow, upperYellow, yellowMask);
 
-            // Combine all masks
+            // Combine masks
             Mat combinedMask = new Mat();
             Core.bitwise_or(blueMask, redMask, combinedMask);
             Core.bitwise_or(combinedMask, yellowMask, combinedMask);
 
-            // Blur to reduce noise
             Imgproc.GaussianBlur(combinedMask, combinedMask, new Size(5, 5), 0);
 
             // Find contours
@@ -117,61 +110,45 @@ public class BlockDetectionOpMode extends LinearOpMode {
             Mat hierarchy = new Mat();
             Imgproc.findContours(combinedMask, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
-            // Variables to track the largest block found
             double maxArea = 0;
             RotatedRect bestRect = null;
 
-            // Process contours
             for (MatOfPoint contour : contours) {
                 double area = Imgproc.contourArea(contour);
-                if (area > 500 && area > maxArea) { // Only consider larger blocks
+                if (area > 500 && area > maxArea) {
                     maxArea = area;
                     MatOfPoint2f contour2f = new MatOfPoint2f(contour.toArray());
                     bestRect = Imgproc.minAreaRect(contour2f);
                 }
             }
 
-            // If a block is detected, lock onto it
             if (bestRect != null) {
-                // Draw bounding box for the detected block
                 Point[] points = new Point[4];
                 bestRect.points(points);
                 for (int i = 0; i < 4; i++) {
                     Imgproc.line(input, points[i], points[(i + 1) % 4], new Scalar(0, 255, 0), 2);
                 }
 
-                // Calculate block angle
                 double angle = bestRect.angle;
 
-                // Adjust the angle based on the camera's perspective
                 if (bestRect.size.width < bestRect.size.height) {
-                    angle = -angle; // Flip for vertical block alignment
+                    angle = -angle;
                 } else {
-                    angle = 90 - angle; // Adjust for horizontal alignment
+                    angle = 90 - angle;
                 }
 
-                // Flip the angle to align left to right (camera orientation)
                 angle = Math.abs(angle) % 180;
 
-                // Map the angle to the servo's range (0.0 to 0.5)
-                hasDetectedBlock = true;
-                double servoTargetPosition = (angle / 90.0) * 0.5;
+                double servoTargetPosition = angle / 180.0;
 
-                // Gradually move the servo towards the target position (0.0)
-                if (Math.abs(lastServoPosition - 0.0) > TOLERANCE_DEGREES) {
-                    lastServoPosition = lastServoPosition - SMOOTHING_FACTOR * (lastServoPosition - 0.0);
-                    clawServo.setPosition(lastServoPosition);
-                } else {
-                    clawServo.setPosition(0.0); // Lock servo at position 0
-                }
-
-                // For debugging, output the corresponding angle for the servo position
-                double mappedAngle = servoTargetPosition * 90; // Map the servo position back to degrees
+                lastServoPosition = lastServoPosition + SMOOTHING_FACTOR * (servoTargetPosition - lastServoPosition);
+                clawServo.setPosition(lastServoPosition);
 
                 telemetry.addData("Detected Block Angle (degrees)", angle);
-                telemetry.addData("Mapped Angle (degrees)", mappedAngle);
                 telemetry.addData("Servo Target Position", servoTargetPosition);
+                telemetry.addData("Actual Servo Position", lastServoPosition);
             }
+
             return input;
         }
     }
