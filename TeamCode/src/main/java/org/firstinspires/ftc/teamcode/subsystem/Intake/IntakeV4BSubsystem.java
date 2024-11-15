@@ -92,6 +92,5 @@ public IntakeV4BSubsystem(HardwareMap hardwareMap, Telemetry telemetry) {
         wristServo2.setPosition(WRIST_2_DEFAULT);
     }
     
-    
-    //ADDED FOR PUSHING
+
 }
