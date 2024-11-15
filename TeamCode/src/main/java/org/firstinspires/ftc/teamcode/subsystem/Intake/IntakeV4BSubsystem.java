@@ -19,13 +19,13 @@ public IntakeV4BSubsystem(HardwareMap hardwareMap, Telemetry telemetry) {
     wristServo2 = hardwareMap.get(Servo.class, "wsrv2"); // Servo Port 3
 } 
    
-    private double WRIST_1_DEFAULT = 0.4;
-    private double WRIST_2_DEFAULT = 0.4;
+    private final double WRIST_1_DEFAULT = 0.4;
+    private final double WRIST_2_DEFAULT = 0.4;
 
-    private double WRIST_1_DROP = 0.25;
-    private double WRIST_2_DROP = 0.25;
-    private double WRIST_1_PICKUP = 0.55;
-    private double WRIST_2_PICKUP = 0.55;
+    private final double WRIST_1_DROP = 0.25;
+    private final double WRIST_2_DROP = 0.25;
+    private final double WRIST_1_PICKUP = 0.55;
+    private final double WRIST_2_PICKUP = 0.55;
 
     public void setWristPickPosition() {
         double currentPos1 = wristServo1.getPosition();
