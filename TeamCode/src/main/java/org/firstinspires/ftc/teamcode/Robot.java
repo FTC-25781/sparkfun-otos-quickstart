@@ -40,7 +40,6 @@ public class Robot {
         depositSlide = new DepositSlideSubsystem(hardwareMap, telemetry);
         depositClaw = new DepositClawSubsystem(hardwareMap, telemetry);
 
-
         drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
     }
 
