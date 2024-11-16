@@ -16,7 +16,7 @@ public class DepositV4BSubsystem implements Subsystem {
     private final double WRIST_1_PICKUP = 0.57;
     private final double WRIST_2_PICKUP = 0.45;
 
-    public void DepositSubsystem(HardwareMap hardwareMap, Telemetry telemetry) {
+    public DepositV4BSubsystem(HardwareMap hardwareMap, Telemetry telemetry) {
         wristServo1 = hardwareMap.get(Servo.class, "dwsrv1"); // Servo Port 1
         wristServo2 = hardwareMap.get(Servo.class, "dwsrv2"); // Servo Port 0
     }

@@ -12,17 +12,16 @@ import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 @TeleOp(name = "Match Teleop", group = "Teleop")
 public class MatchTeleop extends LinearOpMode {
 
+    public double orientationPosition = 0.0;
     Robot robot;
     DcMotor slideMotor;
-
     MecanumDrive drive;
     DcMotor left_front, right_front, left_back, right_back;
-    public double orientationPosition = 0.0;
 
-        @Override
-        public void runOpMode() {
-            // Initialize the Robot and motor mappings
-            robot = new Robot(hardwareMap, telemetry);
+    @Override
+    public void runOpMode() {
+        // Initialize the Robot and motor mappings
+        robot = new Robot(hardwareMap, telemetry);
 
         left_front = hardwareMap.get(DcMotor.class, "left_front");  // Motor Port 2
         right_front = hardwareMap.get(DcMotor.class, "right_front"); // Motor Port 3
@@ -138,7 +137,6 @@ public class MatchTeleop extends LinearOpMode {
         telemetry.addData("Wrist-2 position", robot.intake.wristServo2.getPosition());
         telemetry.addData("Horizontal Slide power", robot.intake.slideMotor.getPower());
         telemetry.addData("Horizontal Slide position", robot.intake.slideMotor.getCurrentPosition());
-
 
 
         telemetry.update();

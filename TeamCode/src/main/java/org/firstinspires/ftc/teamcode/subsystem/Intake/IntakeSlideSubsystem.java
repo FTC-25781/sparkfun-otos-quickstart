@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 public class IntakeSlideSubsystem {
     public DcMotor slideMotor;
     public DcMotor slideMotor2;
@@ -12,7 +14,7 @@ public class IntakeSlideSubsystem {
     final int SLIDE_EXTEND_POS = 800;
     final double SLIDE_EXTEND_SPEED = 0.5;
 
-    public IntakeSlideSubsystem(HardwareMap hardwareMap) {
+    public IntakeSlideSubsystem(HardwareMap hardwareMap, Telemetry telemetry) {
         slideMotor = hardwareMap.get(DcMotor.class, "hsmot"); // Motor Port 0
         slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         slideMotor2 = hardwareMap.get(DcMotor.class, "hsmot2");
@@ -37,4 +39,4 @@ public class IntakeSlideSubsystem {
     }
 
     public void retractMainSlide(){}
-        }
+}

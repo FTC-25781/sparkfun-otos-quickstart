@@ -6,21 +6,41 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
+import org.firstinspires.ftc.teamcode.subsystem.Deposit.DepositClawSubsystem;
+import org.firstinspires.ftc.teamcode.subsystem.Deposit.DepositSlideSubsystem;
+import org.firstinspires.ftc.teamcode.subsystem.Deposit.DepositV4BSubsystem;
 import org.firstinspires.ftc.teamcode.subsystem.DepositSubsystem;
+import org.firstinspires.ftc.teamcode.subsystem.Intake.IntakeClawSubsystem;
+import org.firstinspires.ftc.teamcode.subsystem.Intake.IntakeSlideSubsystem;
+import org.firstinspires.ftc.teamcode.subsystem.Intake.IntakeV4BSubsystem;
 import org.firstinspires.ftc.teamcode.subsystem.IntakeSubsystem;
 
 
 public class Robot {
-    public final IntakeSubsystem intake;
-    public final DepositSubsystem deposit;
-    public final MecanumDrive drive;
-    public final Telemetry telemetry;
+    public IntakeSubsystem intake;
+    public DepositSubsystem deposit;
+    public IntakeV4BSubsystem intakeV4B;
+    public IntakeSlideSubsystem intakeSlide;
+    public IntakeClawSubsystem intakeClaw;
+    public DepositV4BSubsystem depositV4B;
+    public DepositSlideSubsystem depositSlide;
+    public DepositClawSubsystem depositClaw;
+    public MecanumDrive drive;
+    public Telemetry telemetry;
 
 
     public Robot(HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
         intake = new IntakeSubsystem(hardwareMap, telemetry);
         deposit = new DepositSubsystem(hardwareMap, telemetry);
+        intakeV4B = new IntakeV4BSubsystem(hardwareMap, telemetry);
+        intakeSlide = new IntakeSlideSubsystem(hardwareMap, telemetry);
+        intakeClaw = new IntakeClawSubsystem(hardwareMap, telemetry);
+        depositV4B = new DepositV4BSubsystem(hardwareMap, telemetry);
+        depositSlide = new DepositSlideSubsystem(hardwareMap, telemetry);
+        depositClaw = new DepositClawSubsystem(hardwareMap, telemetry);
+
+
         drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
     }
 

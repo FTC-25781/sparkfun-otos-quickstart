@@ -14,7 +14,7 @@ public class DepositSlideSubsystem {
     final int SLIDE_RETRACT_POS = 0;
     final double SLIDE_EXTEND_SPEED = 0.5;
 
-    public void DepositSubsystem(HardwareMap hardwareMap, Telemetry telemetry) {
+    public DepositSlideSubsystem(HardwareMap hardwareMap, Telemetry telemetry) {
         verticalSlideMotor = hardwareMap.get(DcMotor.class, "vsmot"); // Motor Port 1
         intakeLimitSwitch = hardwareMap.get(DigitalChannel.class, "dpltsw"); // Digital Port 0
         verticalSlideMotor2 = hardwareMap.get(DcMotor.class, "vsmot2");
