@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class IntakeClawSubsystem <orientationServo> {
+public class  IntakeClawSubsystem <orientationServo> {
     private final Telemetry telemetry;
     private final Servo clawServo;
     private Servo orientationServo;
@@ -16,8 +16,8 @@ public class IntakeClawSubsystem <orientationServo> {
 
     public IntakeClawSubsystem(HardwareMap hardwareMap, Telemetry telemetry, Servo orientationServo) {
         this.telemetry = telemetry;
-        clawServo = hardwareMap.get(Servo.class, "clsrv"); // Servo Port 1
-        orientationServo = hardwareMap.get(Servo.class, "orsrv"); // Servo Port  0
+        clawServo = hardwareMap.get(Servo.class, "clsrv");
+        orientationServo = hardwareMap.get(Servo.class, "orsrv");
     }
 
     public void openClaw(double CLAW_OPEN_POS) {

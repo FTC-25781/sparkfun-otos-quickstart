@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 public class IntakeSlideSubsystem {
     public DcMotor slideMotor;
+    public DcMotor slideMotor2;
     private DigitalChannel intakeLimitSwitch;
 
     final int SLIDE_EXTEND_POS = 800;
@@ -14,6 +15,8 @@ public class IntakeSlideSubsystem {
     public IntakeSlideSubsystem(HardwareMap hardwareMap) {
         slideMotor = hardwareMap.get(DcMotor.class, "hsmot"); // Motor Port 0
         slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        slideMotor2 = hardwareMap.get(DcMotor.class, "hsmot2");
+        slideMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         intakeLimitSwitch = hardwareMap.get(DigitalChannel.class, "inltsw"); // Digital Port 0
 
         intakeLimitSwitch.setMode(DigitalChannel.Mode.INPUT);
