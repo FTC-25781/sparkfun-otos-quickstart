@@ -79,26 +79,26 @@ public class MatchTeleop extends LinearOpMode {
     private void updateIntakeControls() {
         // Claw controls
         if (gamepad2.a) {
-            robot.intake.openClaw();
+            robot.intakeClaw.openClaw();
         }
         if (gamepad2.b) {
-            robot.intake.closeClaw();
+            robot.intakeClaw.closeClaw();
         }
 
         // Main slide controls
-        robot.intake.manualExtension(gamepad2.left_stick_y);
-        robot.deposit.manualExtension(gamepad2.right_stick_y);
+        robot.intakeSlide.manualExtension(gamepad2.left_stick_y);
+        robot.depositSlide.manualExtension(gamepad2.right_stick_y);
 
 
         // Wrist controls
         if (gamepad2.x) {
-            robot.intake.setWristPickPosition();  // Pick position
+            robot.intakeV4B.setWristPickPosition();  // Pick position
         }
         if (gamepad2.y) {
-            robot.intake.setWristDropPosition();  // Drop position
+            robot.intakeV4B.setWristDropPosition();  // Drop position
         }
         if (gamepad2.left_bumper) {
-            robot.intake.setWristDefaultPosition();  // Neutral position
+            robot.intakeV4B.setWristDefaultPosition();  // Neutral position
         }
         // Orientation control
         // robot.intake.setOrientation(gamepad2.right_stick_y);
@@ -107,36 +107,36 @@ public class MatchTeleop extends LinearOpMode {
     private void updateDepositControls() {
         // Deposit claw controls
         if (gamepad2.dpad_up) {
-            robot.deposit.openDepositClaw();
+            robot.depositClaw.openDepositClaw();
         }
         if (gamepad2.dpad_down) {
-            robot.deposit.closeDepositClaw();
+            robot.depositClaw.closeDepositClaw();
         }
 
         // Deposit slide controls
         if (gamepad2.dpad_right) {
-            robot.deposit.extendDepositMainSlide();
+            robot.depositSlide.extendDepositMainSlide();
         }
         if (gamepad2.dpad_left) {
-            robot.deposit.retractDepositMainSlide();
+            robot.depositSlide.retractDepositMainSlide();
         }
 
         // Deposit wrist controls
         if (gamepad2.left_trigger > 0.0) {
-            robot.deposit.setDepositWristPickPosition();
+            robot.depositV4B.setDepositWristPickPosition();
         }
 
         if (gamepad2.right_bumper) {
-            robot.deposit.setDepositWristDropPosition();
+            robot.depositV4B.setDepositWristDropPosition();
         }
     }
 
     private void sendTelemetry() {
         telemetry.addData("Position", orientationPosition);
-        telemetry.addData("Wrist-1 position", robot.intake.wristServo1.getPosition());
-        telemetry.addData("Wrist-2 position", robot.intake.wristServo2.getPosition());
-        telemetry.addData("Horizontal Slide power", robot.intake.slideMotor.getPower());
-        telemetry.addData("Horizontal Slide position", robot.intake.slideMotor.getCurrentPosition());
+        telemetry.addData("Wrist-1 position", robot.intakeV4B.wristServo1.getPosition());
+        telemetry.addData("Wrist-2 position", robot.intakeV4B.wristServo2.getPosition());
+        telemetry.addData("Horizontal Slide power", robot.intakeSlide.slideMotor.getPower());
+        telemetry.addData("Horizontal Slide position", robot.intakeSlide.slideMotor.getCurrentPosition());
 
 
         telemetry.update();
