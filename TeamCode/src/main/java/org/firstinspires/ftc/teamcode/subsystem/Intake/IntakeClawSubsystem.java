@@ -16,6 +16,10 @@ public class IntakeClawSubsystem {
         orientationServo = hardwareMap.get(Servo.class, "orsrv");
     }
 
+    public void runToPreset() {
+        setOrientation(1.0);
+    }
+
     public void setOrientation(double position) {
         orientationServo.setPosition(clamp(position));
     }

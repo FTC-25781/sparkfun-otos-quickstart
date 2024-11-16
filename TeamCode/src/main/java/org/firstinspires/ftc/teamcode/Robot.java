@@ -17,8 +17,6 @@ import org.firstinspires.ftc.teamcode.subsystem.IntakeSubsystem;
 
 
 public class Robot {
-    public IntakeSubsystem intake;
-    public DepositSubsystem deposit;
     public IntakeV4BSubsystem intakeV4B;
     public IntakeSlideSubsystem intakeSlide;
     public IntakeClawSubsystem intakeClaw;
@@ -31,51 +29,48 @@ public class Robot {
 
     public Robot(HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
-        intake = new IntakeSubsystem(hardwareMap, telemetry);
-        deposit = new DepositSubsystem(hardwareMap, telemetry);
-        intakeV4B = new IntakeV4BSubsystem(hardwareMap, telemetry);
-        intakeSlide = new IntakeSlideSubsystem(hardwareMap, telemetry);
-        intakeClaw = new IntakeClawSubsystem(hardwareMap, telemetry);
-        depositV4B = new DepositV4BSubsystem(hardwareMap, telemetry);
-        depositSlide = new DepositSlideSubsystem(hardwareMap, telemetry);
-        depositClaw = new DepositClawSubsystem(hardwareMap, telemetry);
-
+        intakeV4B = new IntakeV4BSubsystem(hardwareMap);
+        intakeSlide = new IntakeSlideSubsystem(hardwareMap);
+        intakeClaw = new IntakeClawSubsystem(hardwareMap);
+        depositV4B = new DepositV4BSubsystem(hardwareMap);
+        depositSlide = new DepositSlideSubsystem(hardwareMap);
+        depositClaw = new DepositClawSubsystem(hardwareMap);
         drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
     }
 
     public void Preset() {
-        this.deposit.runToPreset();
-        this.intake.runToPreset();
+        this.depositClaw.runToPreset();
+        this.intakeClaw.runToPreset();
     }
 
     public void startIntakePickup() {
-        this.intake.extendMainSlide();
-        this.intake.openClaw();
-        this.intake.setWristDefaultPosition();
+        this.intakeSlide.extendMainSlide();
+        this.intakeClaw.openClaw();
+        this.intakeV4B.setWristDefaultPosition();
     }
 
     public void startIntakeDrop() {
-        this.intake.setWristPickPosition();
-        this.intake.closeClaw();
-        this.intake.setWristDropPosition();
-        this.intake.retractMainSlide();
+        this.intakeV4B.wristPositionAction();
+        this.intakeClaw.closeClaw();
+        this.intakeV4B.setWristDropPosition();
+        this.intakeSlide.retractMainSlide();
     }
 
 
     public void startDepositPickup() {
-        this.intake.openClaw();
-        this.intake.setWristDefaultPosition();
-        this.deposit.openDepositClaw();
-        this.deposit.setDepositWristPickPosition();
-        this.deposit.retractDepositMainSlide();
-        this.deposit.closeDepositClaw();
+        this.intakeClaw.openClaw();
+        this.intakeV4B.setWristDefaultPosition();
+        this.depositClaw.openDepositClaw();
+        this.depositV4B.setWristPickPosition();
+        this.depositSlide.retractDepositMainSlide();
+        this.depositClaw.closeDepositClaw();
     }
 
     public void startDepositDrop() {
-        this.deposit.extendDepositMainSlide();
-        this.deposit.setDepositWristDropPosition();
-        this.deposit.openDepositClaw();
-        this.deposit.closeDepositClaw();
+        this.depositSlide.extendDepositMainSlide();
+        this.depositV4B.setWristDropPosition();
+        this.depositClaw.openDepositClaw();
+        this.depositClaw.closeDepositClaw();
     }
 
     // Method to update all subsystems
