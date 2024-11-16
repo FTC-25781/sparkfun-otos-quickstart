@@ -101,8 +101,6 @@ public class MatchTeleop extends LinearOpMode {
         if (gamepad2.left_bumper) {
             robot.intake.setWristDefaultPosition();  // Neutral position
         }
-        // Orientation control
-        // robot.intake.setOrientation(gamepad2.right_stick_y);
     }
 
     private void updateDepositControls() {
