@@ -15,7 +15,6 @@ import org.firstinspires.ftc.teamcode.subsystem.Intake.IntakeSlideSubsystem;
 import org.firstinspires.ftc.teamcode.subsystem.Intake.IntakeV4BSubsystem;
 import org.firstinspires.ftc.teamcode.subsystem.IntakeSubsystem;
 
-
 public class Robot {
     public IntakeV4BSubsystem intakeV4B;
     public IntakeSlideSubsystem intakeSlide;

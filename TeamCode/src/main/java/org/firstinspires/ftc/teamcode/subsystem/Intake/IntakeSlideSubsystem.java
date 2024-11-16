@@ -17,6 +17,7 @@ public class IntakeSlideSubsystem {
         intakeLimitSwitch = hardwareMap.get(DigitalChannel.class, "inltsw");
 
         intakeLimitSwitch.setMode(DigitalChannel.Mode.INPUT);
+
         slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }

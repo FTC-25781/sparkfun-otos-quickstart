@@ -7,7 +7,6 @@ public class IntakeClawSubsystem {
 
     private final Servo clawServo;
     private final Servo orientationServo;
-
     private static final double CLAW_OPEN_POS = 0.69;
     private static final double CLAW_CLOSED_POS = 0.9;
 

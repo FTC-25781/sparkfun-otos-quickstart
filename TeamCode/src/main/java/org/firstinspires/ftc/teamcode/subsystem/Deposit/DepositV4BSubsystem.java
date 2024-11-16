@@ -19,7 +19,6 @@ public class DepositV4BSubsystem implements Subsystem {
     public DepositV4BSubsystem(HardwareMap hardwareMap) {
         wristServo1 = hardwareMap.get(Servo.class, "dwsrv1");
         wristServo2 = hardwareMap.get(Servo.class, "dwsrv2");
-
         wristServo2.setDirection(Servo.Direction.REVERSE);
     }
 

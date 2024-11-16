@@ -11,7 +11,6 @@ public class IntakeV4BSubsystem {
     private final Servo wristServo2;
 
     private static final double POSITION_INCREMENT = 0.01;
-
     private static final double WRIST_1_DEFAULT = 0.4;
     private static final double WRIST_2_DEFAULT = 0.4;
     private static final double WRIST_1_DROP = 0.25;
