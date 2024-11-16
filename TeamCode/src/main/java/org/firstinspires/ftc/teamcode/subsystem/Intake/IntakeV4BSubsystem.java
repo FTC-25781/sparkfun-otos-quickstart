@@ -8,6 +8,8 @@ public class IntakeV4BSubsystem {
     public Servo wristServo1;
     public Servo wristServo2;
 
+    private static final double POSITION_INCREMENT = 0.01;
+
 public IntakeV4BSubsystem(HardwareMap hardwareMap, Telemetry telemetry){
     wristServo1 = hardwareMap.get(Servo.class, "wsrv1"); // Servo Port 2
     wristServo2 = hardwareMap.get(Servo.class, "wsrv2"); // Servo Port 3
