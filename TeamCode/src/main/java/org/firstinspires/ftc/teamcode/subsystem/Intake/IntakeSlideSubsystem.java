@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class IntakeSlideSubsystem {
 
-    private final DcMotor slideMotor;
+    public final DcMotor slideMotor;
     private final DigitalChannel intakeLimitSwitch;
 
     private static final int SLIDE_EXTEND_POS = 800;

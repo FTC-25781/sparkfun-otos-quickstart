@@ -39,9 +39,16 @@ public class DepositV4BSubsystem implements Subsystem {
         wristServo1.setPosition(pos1);
         wristServo2.setPosition(pos2);
     }
+    public void setDepositWristPickPosition() {
+    }
+
+    public void setDepositWristDropPosition() {
+    }
 
     @Override
     public void update() {
         // No-op: Implement update logic if necessary.
     }
+
+
 }
