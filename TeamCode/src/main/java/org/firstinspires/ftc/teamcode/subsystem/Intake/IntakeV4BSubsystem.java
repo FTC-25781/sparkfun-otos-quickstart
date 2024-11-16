@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.subsystem.Intake;
 
+import androidx.annotation.NonNull;
+
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -10,11 +14,18 @@ public class IntakeV4BSubsystem {
 
     private static final double POSITION_INCREMENT = 0.01;
 
-public IntakeV4BSubsystem(HardwareMap hardwareMap, Telemetry telemetry){
-    wristServo1 = hardwareMap.get(Servo.class, "wsrv1"); // Servo Port 2
-    wristServo2 = hardwareMap.get(Servo.class, "wsrv2"); // Servo Port 3
-}
+    public IntakeV4BSubsystem(HardwareMap hardwareMap, Telemetry telemetry) {
+        wristServo1 = hardwareMap.get(Servo.class, "wsrv1"); // Servo Port 2
+        wristServo2 = hardwareMap.get(Servo.class, "wsrv2"); // Servo Port 3
+    }
 
+    private final double WRIST_1_DEFAULT = 0.4;
+    private final double WRIST_2_DEFAULT = 0.4;
+
+    private final double WRIST_1_DROP = 0.25;
+    private final double WRIST_2_DROP = 0.25;
+    private final double WRIST_1_PICKUP = 0.55;
+    private final double WRIST_2_PICKUP = 0.55;
 
     public void setWristPickPosition() {
         double currentPos1 = wristServo1.getPosition();
@@ -57,7 +68,7 @@ public IntakeV4BSubsystem(HardwareMap hardwareMap, Telemetry telemetry){
             @Override
             public boolean run(TelemetryPacket telemetryPacket) {
                 if (currentPos1 < WRIST_1_PICKUP) {
-                currentPos1 = Math.min(currentPos1 + POSITION_INCREMENT, WRIST_1_PICKUP);
+                    currentPos1 = Math.min(currentPos1 + POSITION_INCREMENT, WRIST_1_PICKUP);
                 } else if (currentPos1 > WRIST_1_PICKUP) {
                     currentPos1 = Math.max(currentPos1 - POSITION_INCREMENT, WRIST_1_PICKUP);
                 }
@@ -80,7 +91,7 @@ public IntakeV4BSubsystem(HardwareMap hardwareMap, Telemetry telemetry){
         wristServo1.setPosition(WRIST_1_DEFAULT);
         wristServo2.setPosition(WRIST_2_DEFAULT);
     }
-    
-    
-    //ADDED FOR PUSHING
 
+
+    //ADDED FOR PUSHING
+}
