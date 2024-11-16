@@ -70,12 +70,12 @@ public class IntakeSubsystem implements Subsystem {
     }
 
     public void retractMainSlide() {
-//        if (!intakeLimitSwitch.getState() && slideMotor.getCurrentPosition() != 0) {
-//            slideMotor.setPower(0);
-//            slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        } else {
-//            slideMotor.setPower(-SLIDE_EXTEND_SPEED);
-//        }
+        if (!intakeLimitSwitch.getState() && slideMotor.getCurrentPosition() != 0) {
+            slideMotor.setPower(0);
+            slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        } else {
+            slideMotor.setPower(-SLIDE_EXTEND_SPEED);
+        }
     }
 
     // Wrist Functions
@@ -83,7 +83,6 @@ public class IntakeSubsystem implements Subsystem {
         wristServo1.setPosition(WRIST_1_DROP);
         wristServo2.setPosition(WRIST_2_DROP);
     }
-
 
     public void setWristPickPosition() {
         double currentPos1 = wristServo1.getPosition();

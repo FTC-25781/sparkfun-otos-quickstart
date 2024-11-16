@@ -1,42 +1,50 @@
 package org.firstinspires.ftc.teamcode.subsystem.Intake;
 
 import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.DcMotor;
-
-import org.firstinspires.ftc.robotcore.external.Telemetry;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class IntakeSlideSubsystem {
-    public DcMotor slideMotor;
-    public DcMotor slideMotor2;
-    private DigitalChannel intakeLimitSwitch;
 
-    final int SLIDE_EXTEND_POS = 800;
-    final double SLIDE_EXTEND_SPEED = 0.5;
+    private final DcMotor slideMotor;
+    private final DigitalChannel intakeLimitSwitch;
 
-    public IntakeSlideSubsystem(HardwareMap hardwareMap, Telemetry telemetry) {
-        slideMotor = hardwareMap.get(DcMotor.class, "hsmot"); // Motor Port 0
-        slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        slideMotor2 = hardwareMap.get(DcMotor.class, "hsmot2");
-        slideMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        intakeLimitSwitch = hardwareMap.get(DigitalChannel.class, "inltsw"); // Digital Port 0
+    private static final int SLIDE_EXTEND_POS = 800;
+    private static final double SLIDE_EXTEND_SPEED = 0.5;
+
+    public IntakeSlideSubsystem(HardwareMap hardwareMap) {
+        slideMotor = hardwareMap.get(DcMotor.class, "hsmot");
+        intakeLimitSwitch = hardwareMap.get(DigitalChannel.class, "inltsw");
 
         intakeLimitSwitch.setMode(DigitalChannel.Mode.INPUT);
-
+        slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public void manualExtension(double y) {
-        slideMotor.setPower(y); // Clamp to valid motor power range
-
+    public void manualExtension(double power) {
+        slideMotor.setPower(clampMotorPower(power));
     }
 
     public void extendMainSlide() {
         slideMotor.setTargetPosition(SLIDE_EXTEND_POS);
         slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         slideMotor.setPower(SLIDE_EXTEND_SPEED);
-
-
     }
 
-    public void retractMainSlide(){}
+    public void retractMainSlide() {
+        if (!intakeLimitSwitch.getState()) {
+            stopAndResetSlide();
+        } else {
+            slideMotor.setPower(-SLIDE_EXTEND_SPEED);
+        }
+    }
+
+    private void stopAndResetSlide() {
+        slideMotor.setPower(0);
+        slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
+
+    private double clampMotorPower(double power) {
+        return Math.max(-1.0, Math.min(1.0, power));
+    }
 }
