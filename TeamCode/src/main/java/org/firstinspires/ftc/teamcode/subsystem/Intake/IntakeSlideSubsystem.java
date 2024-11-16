@@ -47,4 +47,8 @@ public class IntakeSlideSubsystem {
     private double clampMotorPower(double power) {
         return Math.max(-1.0, Math.min(1.0, power));
     }
+
+    public void update() {
+        // Placeholder for periodic updates if needed
+    }
 }

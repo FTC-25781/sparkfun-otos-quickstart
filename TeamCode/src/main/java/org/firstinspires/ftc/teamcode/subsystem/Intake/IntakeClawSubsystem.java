@@ -35,4 +35,8 @@ public class IntakeClawSubsystem {
     private double clamp(double value) {
         return Math.max(0.0, Math.min(1.0, value));
     }
+
+    public void update() {
+        // Placeholder for periodic updates if needed
+    }
 }

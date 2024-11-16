@@ -75,8 +75,12 @@ public class Robot {
 
     // Method to update all subsystems
     public void update() {
-        intake.update();
-        deposit.update();
+        intakeClaw.update();
+        intakeSlide.update();
+        intakeV4B.update();
+        depositClaw.update();
+        depositSlide.update();
+        depositV4B.update();
         drive.updatePoseEstimate();
     }
 }

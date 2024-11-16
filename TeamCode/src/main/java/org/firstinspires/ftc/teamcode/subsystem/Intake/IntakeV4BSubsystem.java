@@ -64,4 +64,8 @@ public class IntakeV4BSubsystem {
             }
         };
     }
+
+    public void update() {
+        // Placeholder for periodic updates if needed
+    }
 }
