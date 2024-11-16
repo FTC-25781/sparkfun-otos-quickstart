@@ -9,6 +9,7 @@ public class DepositSlideSubsystem {
     private final DigitalChannel depositLimitSwitch;
     private final DcMotor verticalSlideMotor;
     private final DcMotor verticalSlideMotor2;
+
     private static final int SLIDE_EXTEND_POS = 800;
     private static final int SLIDE_RETRACT_POS = 0;
     private static final double SLIDE_EXTEND_SPEED = 0.5;

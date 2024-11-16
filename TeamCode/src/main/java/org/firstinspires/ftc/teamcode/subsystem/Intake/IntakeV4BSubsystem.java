@@ -7,10 +7,11 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class IntakeV4BSubsystem {
 
-    public final Servo wristServo1;
-    public final Servo wristServo2;
+    private final Servo wristServo1;
+    private final Servo wristServo2;
 
     private static final double POSITION_INCREMENT = 0.01;
+
     private static final double WRIST_1_DEFAULT = 0.4;
     private static final double WRIST_2_DEFAULT = 0.4;
     private static final double WRIST_1_DROP = 0.25;
@@ -65,9 +66,6 @@ public class IntakeV4BSubsystem {
     }
 
     public void update() {
-        // Placeholder for periodic updates if needed
-    }
 
-    public void setWristPickPosition() {
     }
 }
