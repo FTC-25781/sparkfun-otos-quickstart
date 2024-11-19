@@ -133,9 +133,10 @@ public class blockDetection extends LinearOpMode {
 
                 if (bestRect.size.width < bestRect.size.height) {
                     angle = -angle;
-                } else {
-                    angle = 90 - angle;
                 }
+//                } else {
+//                    angle = 90 - angle;
+//                }
 
                 angle = Math.abs(angle) % 180;
 
